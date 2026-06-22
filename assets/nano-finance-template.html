@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nano-Finance (ন্যানো-ফাইন্যান্স) - HTML/Laravel Template</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN for Static Template) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        serif: ['Space Grotesk', 'ui-serif', 'Georgia', 'serif'],
+                    },
+                    colors: {
+                        gold: {
+                            50: '#fdfbf7',
+                            100: '#fbf7ed',
+                            200: '#f4ebd2',
+                            300: '#e9dab1',
+                            400: '#dac187',
+                            500: '#c5a059',
+                            600: '#b28945',
+                            700: '#956e34',
+                            800: '#755428',
+                            900: '#4e371b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Smooth Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c5a059;
+        }
+        .bKash-bg {
+            background-color: #e2136e;
+        }
+        .nagad-radial-bg {
+            background: radial-gradient(ellipse at center, #ff1224 0%, #d81421 28%, #bc101c 55%, #9d0913 100%);
+        }
+        /* Custom hide utilities */
+        .page-content {
+            display: none;
+        }
+        .page-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[#050505] text-zinc-200 antialiased overflow-x-hidden selection:bg-[#c5a059] selection:text-black">
+
+    <!-- ========================================================== -->
+    <!-- LARAVEL NOTE / TEMPLATE DIRECTORY GUIDE (ONLY FOR DEVELOPER) -->
+    <!-- ========================================================== -->
+    <div id="developer-notice" class="bg-[#121214] border-b border-zinc-800 p-4 text-xs font-sans">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex items-start gap-2">
+                <span class="p-1 bg-amber-500/10 text-amber-500 rounded font-bold uppercase text-[9px] tracking-wider shrink-0 mt-0.5">LARAVEL GUIDE</span>
+                <div>
+                    <h4 class="text-zinc-200 font-bold mb-0.5">লারাভেল ডেভেলপার গাইড (Laravel Integration Tips)</h4>
+                    <p class="text-zinc-400">এই সিঙ্গেল-ফাইল টেমপ্লেটটিতে সম্পূর্ণ ইন্টারঅ্যাক্টিভ ফ্রন্টএন্ড রয়েছে। আপনি লারাভেলে এটিকে যুক্ত করতে নিচের গাইডলাইন ফলো করুন:</p>
+                    <ul class="list-disc pl-4 mt-1 text-zinc-500 space-y-0.5">
+                        <li>সার্বজনীন লেআউটের জন্য <code class="text-[#c5a059]">resources/views/layouts/app.blade.php</code> তৈরি করে সাইডবার ও বটম নেভিগেশন সেখানে রাখুন।</li>
+                        <li>বডি অংশকে <code class="text-[#c5a059]">@yield('content')</code> দিয়ে পরিবর্তন করে নিন।</li>
+                        <li>অন্যান্য পেজগুলোকে আলাদা ভিউ ফাইলে (যেমন: <code class="text-[#c5a059]">dashboard.blade.php</code>, <code class="text-[#c5a059]">loan.blade.php</code>) লিখে কন্ট্রোলার দিয়ে লোড করুন।</li>
+                    </ul>
+                </div>
+            </div>
+            <button onclick="document.getElementById('developer-notice').style.display='none'" class="text-zinc-500 hover:text-zinc-200 text-xs px-2.5 py-1 bg-zinc-800 rounded-lg shrink-0 transition-colors">
+                গাইডটি বন্ধ করুন
+            </button>
+        </div>
+    </div>
+
+    <div class="min-h-screen flex flex-col md:flex-row">
+        <!-- ========================================================== -->
+        <!-- LEFT CONTROL PANEL (ডেস্কটপ কন্ট্রোলার এবং স্ক্রিন সিলেকশন) -->
+        <!-- ========================================================== -->
+        <div class="w-full md:w-[320px] lg:w-[350px] md:h-screen md:overflow-y-auto border-b md:border-b-0 md:border-r border-zinc-900 p-5 flex flex-col gap-6 bg-[#08080a] shrink-0 z-50">
+            <div>
+                <div class="flex items-center gap-2.5 mb-2">
+                    <div class="p-1 px-1.5 text-[10px] bg-[#c5a059] rounded text-black font-black uppercase tracking-wider">
+                        NF
+                    </div>
+                    <h1 class="text-xl font-serif italic tracking-tight text-white flex items-center gap-1.5">
+                        ন্যানো-ফাইন্যান্স <span class="not-italic font-sans text-xs uppercase tracking-[0.2em] text-[#c5a059]">টেমপ্লেট</span>
+                    </h1>
+                </div>
+                <p class="text-xs text-zinc-500 font-serif italic">
+                    Laravel ও HTML টেমপ্লেট: সমস্ত ক্যাশ-ইন, কিস্তি ও ঋণ ক্যালকুলেটর সিস্টেম সহ।
+                </p>
+            </div>
+
+            <!-- HTML/Laravel Info Block -->
+            <div class="bg-[#121212]/80 border border-zinc-800/80 rounded-2xl p-4 text-xs flex flex-col gap-2">
+                <span class="text-[#c5a059] font-bold uppercase tracking-wider text-[10px]">টেমপ্লেট ফিচারসমূহ</span>
+                <p class="text-zinc-400">এই টেমপ্লেটটিতে সম্পূর্ণ ফ্লো দেওয়া আছে। বামদিকের কন্ট্রোলার অথবা নিচের মোবাইল ন্যাভ-বার ব্যবহার করে সমস্ত স্ক্রিন চেক করতে পারবেন।</p>
+                <div class="bg-zinc-900/60 p-2.5 rounded-xl border border-zinc-800 text-[11px] text-zinc-500 font-mono mt-1">
+                    ⚡ Alpine.js বা Vue.js ছাড়া বিশুদ্ধ CSS/Tailwind3 & Vanilla JS দিয়ে লাইটওয়েট এবং অফলাইন কোড দিয়ে তৈরি।
+                </div>
+            </div>
+
+            <!-- Warp Navigation screen check values -->
+            <div class="bg-[#121212] rounded-2xl p-4 border border-zinc-800/70">
+                <h3 class="text-xs font-bold text-zinc-400 tracking-wider uppercase mb-3 flex items-center gap-1.5 font-sans">
+                    <svg class="w-4 h-4 text-[#c5a059]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    স্ক্রিন ওয়ার্প নেভিগেশন (Preview Screens)
+                </h3>
+
+                <div class="flex flex-col gap-1 md:max-h-[300px] md:overflow-y-auto pb-1" id="screen-navigation-list">
+                    <!-- Dynamic screen items rendered as links -->
+                    <button onclick="switchScreen('splash')" id="btn-splash" class="warp-nav-btn active flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>স্বাগতম স্ক্রিন (Splash)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">Welcome</span>
+                    </button>
+                    
+                    <button onclick="switchScreen('login')" id="btn-login" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>লগইন ও রেজিস্ট্রেশন</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">Auth</span>
+                    </button>
+                    
+                    <button onclick="switchScreen('home')" id="btn-home" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>প্রধান ড্যাশবোর্ড (Home)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">Dashboard</span>
+                    </button>
+                    
+                    <button onclick="switchScreen('savings')" id="btn-savings" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>সঞ্চয় হিসাব (Savings)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">Wallet</span>
+                    </button>
+
+                    <button onclick="switchScreen('deposit')" id="btn-deposit" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>৳ টাকা জমা (Cash In)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">Deposit</span>
+                    </button>
+
+                    <button onclick="switchScreen('withdraw')" id="btn-withdraw" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>৳ টাকা উত্তোলন (Cash Out)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">Withdraw</span>
+                    </button>
+                    
+                    <button onclick="switchScreen('loan_apply')" id="btn-loan_apply" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>নতুন ঋণ আবেদন (Apply)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">Application</span>
+                    </button>
+
+                    <button onclick="switchScreen('loan_calculator')" id="btn-loan_calculator" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>ঋণ ক্যালকুলেটর (Calculator)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">Calculator</span>
+                    </button>
+
+                    <button onclick="switchScreen('loan_status')" id="btn-loan_status" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>ঋণ স্থিতি ট্র্যাকার (Loans List)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">Loans</span>
+                    </button>
+
+                    <button onclick="switchScreen('emi_schedule')" id="btn-emi_schedule" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>কিস্তি শিডিউল ও পরিশোধ (EMI)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">EMI</span>
+                    </button>
+
+                    <button onclick="switchScreen('transaction_history')" id="btn-transaction_history" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>লেনদেনের ইতিহাস (Transactions)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">Logs</span>
+                    </button>
+
+                    <button onclick="switchScreen('notifications')" id="btn-notifications" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>বিজ্ঞপ্তি সমূহ (Notifications)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono font-bold" id="badge-notif-count">৩</span>
+                    </button>
+
+                    <button onclick="switchScreen('profile')" id="btn-profile" class="warp-nav-btn flex items-center justify-between p-1.5 px-2.5 rounded-xl text-left text-xs transition-all w-full">
+                        <span>গ্রাহক প্রোফাইল (Profile)</span>
+                        <span class="text-[9px] bg-zinc-900 text-zinc-500 px-1.5 py-0.2 rounded font-mono">User</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CSS style guide indicators -->
+            <div class="mt-auto hidden md:block bg-[#121212]/40 rounded-2xl p-4 border border-zinc-800/40">
+                <span class="text-[9px] font-bold text-zinc-500 tracking-wider uppercase block mb-1">Color Palette (নকশা প্যালেট)</span>
+                <div class="flex gap-1">
+                    <div class="w-6 h-6 rounded bg-[#c5a059]" title="Primary Gold"></div>
+                    <div class="w-6 h-6 rounded bg-[#050505] border border-zinc-850" title="Dark Canvas"></div>
+                    <div class="w-6 h-6 rounded bg-[#121212] border border-zinc-800" title="Section Card"></div>
+                    <div class="w-6 h-6 rounded bg-emerald-500" title="Positive Success"></div>
+                    <div class="w-6 h-6 rounded bg-[#e2136e]" title="bKash Magenta"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- MAIN CLIENT PORTAL STAGE (সিমুলেটর মূল বডি) -->
+        <!-- ========================================================== -->
+        <div class="flex-grow md:h-screen flex flex-col overflow-hidden relative bg-[#0a0a09]">
+            
+            <!-- Dynamic view containers toggled by js selection -->
+            <div class="flex-grow overflow-y-auto p-4 md:p-8 pb-24 md:pb-8">
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 1: SPLASH SCREEN -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-splash" class="page-content active max-w-lg mx-auto py-12">
+                    <div class="bg-[#121212] border border-zinc-850 rounded-3xl p-8 text-center flex flex-col items-center justify-center min-h-[500px] shadow-2xl relative overflow-hidden">
+                        <div class="absolute inset-0 bg-radial-gradient from-[#c5a059]/10 to-transparent pointer-events-none"></div>
+                        
+                        <div class="p-4 bg-[#c5a059]/10 rounded-full border border-[#c5a059]/20 mb-6 animate-pulse">
+                            <span class="text-3xl">🏛️</span>
+                        </div>
+                        
+                        <span class="text-xs uppercase tracking-[0.3em] font-mono text-[#c5a059] mb-2 font-bold">NANO-FINANCE SIMULATOR</span>
+                        <h2 class="text-3xl font-serif italic text-white font-black mb-3">ন্যানো-ফাইন্যান্স লিমিটেড</h2>
+                        <p class="text-zinc-400 text-sm mb-8 px-6">আধুনিক ক্ষুদ্রঋণ ও সঞ্চয় ব্যবস্থা ব্যবস্থাপনার জন্য আপনার ভরসাযোগ্য ডিজিটাল সহযোগী।</p>
+                        
+                        <button onclick="switchScreen('login')" class="px-8 py-3 bg-[#c5a059] hover:bg-gold-600 text-black font-extrabold text-sm rounded-full transition-all tracking-wide shadow-lg shadow-gold-500/10 cursor-pointer">
+                            ব্যাংকিং পোর্টালে প্রবেশ করুন
+                        </button>
+                        
+                        <span class="text-[10px] text-zinc-600 absolute bottom-6 font-mono font-medium">VERSION 1.4.0 • SECURE END-TO-END SYSTEM</span>
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 2: LOGIN & REGISTRATION -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-login" class="page-content max-w-md mx-auto py-8">
+                    <div class="bg-[#121212] border border-zinc-850 rounded-3xl p-6 md:p-8 shadow-2xl">
+                        <!-- Top Tabs -->
+                        <div class="flex justify-center border-b border-zinc-800 pb-4 mb-6">
+                            <button id="login-tab-signin" onclick="toggleAuthTab('signin')" class="text-sm font-bold text-white border-b-2 border-[#c5a059] pb-2 px-4 transition-all">লগইন</button>
+                            <button id="login-tab-signup" onclick="toggleAuthTab('signup')" class="text-sm font-bold text-zinc-500 pb-2 px-4 hover:text-zinc-300 transition-all ml-4">নতুন রেজিষ্ট্রেশন</button>
+                        </div>
+
+                        <!-- Tab 1: LOG IN -->
+                        <div id="auth-panel-signin">
+                            <div class="mb-4">
+                                <label class="text-xs text-zinc-400 tracking-wider font-extrabold uppercase mb-1 md:mb-1.5 block">মোবাইল নম্বর</label>
+                                <div class="relative">
+                                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-xs font-mono">০১৭</span>
+                                    <input type="tel" id="signin-phone" value="১২৩৪৫৬৭৮" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 pl-12 pr-4 text-sm font-sans text-white focus:outline-none focus:border-gold-500/50" placeholder="১২৩৪৫৬৭৮">
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="text-xs text-zinc-400 tracking-wider font-extrabold uppercase mb-1 md:mb-1.5 block">পিন কোড (৪-সংখ্যা)</label>
+                                <input type="password" id="signin-pin" value="৯৯৯৯" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm font-mono tracking-widest text-white focus:outline-none focus:border-gold-500/50" placeholder="••••">
+                            </div>
+
+                            <button onclick="actionSimulateLogin()" class="w-full py-3 bg-[#c5a059] hover:bg-gold-600 text-black font-extrabold text-sm rounded-xl transition-all shadow-md">
+                                অ্যাকাউন্টে সাইন ইন করুন
+                            </button>
+                            
+                            <p class="text-[10px] text-zinc-500 text-center mt-4">ডিফল্ট টেস্টিং পাসওয়ার্ড: মোবাইল নম্বর <strong class="text-zinc-400">01712345678</strong> এবং পিন <strong class="text-zinc-400">9999</strong></p>
+                        </div>
+
+                        <!-- Tab 2: SIGN UP -->
+                        <div id="auth-panel-signup" class="hidden">
+                            <div class="mb-4">
+                                <label class="text-xs text-zinc-400 tracking-wider font-extrabold uppercase mb-1 block">গ্রাহকের নাম</label>
+                                <input type="text" id="signup-name" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm font-sans text-white focus:outline-none focus:border-gold-500/50" placeholder="যেমন: আরিফ রহমান">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="text-xs text-zinc-400 tracking-wider font-extrabold uppercase mb-1 block">মোবাইল নম্বর</label>
+                                <input type="tel" id="signup-phone" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm font-sans text-white focus:outline-none focus:border-gold-500/50" placeholder="০১৭XXXXXXXX">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 mb-6">
+                                <div>
+                                    <label class="text-xs text-zinc-400 tracking-wider font-extrabold uppercase mb-1 block">নতুন পিন সেট</label>
+                                    <input type="password" id="signup-pin" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm font-mono text-white focus:outline-none focus:border-gold-500/50" placeholder="৪ সংখ্যা">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-zinc-400 tracking-wider font-extrabold uppercase mb-1 block">পিন নিশ্চিত করুন</label>
+                                    <input type="password" id="signup-pin-confirm" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm font-mono text-white focus:outline-none focus:border-gold-500/50" placeholder="৪ সংখ্যা">
+                                </div>
+                            </div>
+
+                            <button onclick="actionSimulateSignUp()" class="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-[#dfc187] border border-zinc-700 font-extrabold text-sm rounded-xl transition-all">
+                                নতুন গ্রাহক অ্যাকাউন্ট তৈরি করুন
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 3: HOME DASHBOARD -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-home" class="page-content max-w-4xl mx-auto py-2">
+                    <!-- Dashboard Greeting -->
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+                        <div>
+                            <span class="text-xs text-zinc-500 font-mono block">শুভ দিন,</span>
+                            <h2 class="text-2xl font-serif italic text-white flex items-center gap-2 font-bold">
+                                জনাব <span id="home-greeting-name" class="text-[#c5a059]">আরিফ রহমান</span> 👋
+                            </h2>
+                            <p class="text-xs text-zinc-400 font-sans">অ্যাকাউন্ট নং: <span id="home-account-no" class="font-mono">১০১২৫৩২৪৮০</span></p>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <button onclick="switchScreen('notifications')" class="relative p-2.5 bg-[#121212] border border-zinc-850 rounded-xl hover:bg-zinc-900 transition-colors">
+                                🔔
+                                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-[9px] text-white rounded-full flex items-center justify-center font-bold font-mono">৩</span>
+                            </button>
+                            <button onclick="switchScreen('profile')" class="flex items-center gap-2 p-2 px-3.5 bg-[#121212] border border-zinc-850 rounded-xl hover:bg-zinc-900 transition-colors">
+                                <div class="w-5 h-5 rounded-full bg-[#c5a059] flex items-center justify-center text-black font-extrabold text-[10px]">👤</div>
+                                <span class="text-xs font-semibold text-zinc-300">অ্যাকাউন্ট</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Balance Bento Grid Card -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <!-- Card 1: Balance -->
+                        <div class="md:col-span-2 bg-[#121212] border border-zinc-850 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between min-h-[160px]">
+                            <div class="absolute top-0 right-0 p-8 text-6xl opacity-5 pointer-events-none">🏛️</div>
+                            <div>
+                                <span class="text-xs font-bold text-zinc-400 tracking-widest uppercase block mb-1">মোট সঞ্চয় স্থিতি (Savings Balance)</span>
+                                <h3 class="text-3xl font-serif text-[#c5a059] font-black" id="dashboard-balance">৳ ২,৫০,০০০.০০</h3>
+                            </div>
+                            <div class="flex items-center gap-4 mt-6">
+                                <button onclick="switchScreen('deposit')" class="flex-1 py-2.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-xl text-xs font-bold transition-all text-center">
+                                    + টাকা জমা
+                                </button>
+                                <button onclick="switchScreen('withdraw')" class="flex-1 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-bold transition-all text-center">
+                                    - টাকা উত্তোলন
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Loan Stats -->
+                        <div class="bg-gradient-to-br from-[#181210] to-[#121212] border border-zinc-850 rounded-3xl p-6 flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-zinc-400 tracking-widest uppercase block mb-1">চলতি ঋণ স্থিতি</span>
+                                <h3 class="text-2xl font-serif text-amber-200 font-extrabold">৳ ১,৬৫,০০০.০০</h3>
+                                <p class="text-[11px] text-zinc-500 mt-1">৩ মাস বাকি • কিস্তি পরিশোধ যোগ্য</p>
+                            </div>
+                            <button onclick="switchScreen('loan_status')" class="w-full py-2 bg-[#c5a059]/10 hover:bg-[#c5a059]/20 text-[#dfc187] rounded-xl text-xs font-bold transition-all text-center mt-4">
+                                ঋণের বিবরণ দেখুন
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Shortcut Icons Panel -->
+                    <div class="bg-[#121212]/50 border border-zinc-850/80 rounded-2xl p-4 mb-6">
+                        <span class="text-xs font-bold text-zinc-400 tracking-wider uppercase mb-3 block">সহজ সেবা ক্যাটাগরি (Instant Services)</span>
+                        <div class="grid grid-cols-4 gap-3 text-center">
+                            <button onclick="switchScreen('deposit')" class="flex flex-col items-center gap-1.5 p-2 bg-zinc-900/40 rounded-xl hover:bg-zinc-800/80 transition-colors cursor-pointer">
+                                <span class="text-xl">💰</span>
+                                <span class="text-[10px] text-zinc-300 font-bold">টাকা জমা</span>
+                            </button>
+                            <button onclick="switchScreen('withdraw')" class="flex flex-col items-center gap-1.5 p-2 bg-zinc-900/40 rounded-xl hover:bg-zinc-800/80 transition-colors cursor-pointer">
+                                <span class="text-xl">💸</span>
+                                <span class="text-[10px] text-zinc-300 font-bold">টাকা উত্তোলন</span>
+                            </button>
+                            <button onclick="switchScreen('loan_apply')" class="flex flex-col items-center gap-1.5 p-2 bg-zinc-900/40 rounded-xl hover:bg-zinc-800/80 transition-colors cursor-pointer">
+                                <span class="text-xl">📝</span>
+                                <span class="text-[10px] text-zinc-300 font-bold">ঋণ আবেদন</span>
+                            </button>
+                            <button onclick="switchScreen('emi_schedule')" class="flex flex-col items-center gap-1.5 p-2 bg-zinc-900/40 rounded-xl hover:bg-zinc-800/80 transition-colors cursor-pointer">
+                                <span class="text-xl">💳</span>
+                                <span class="text-[10px] text-zinc-300 font-bold">কিস্তি পরিশোধ</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions list -->
+                    <div class="bg-[#121212] border border-zinc-850 rounded-2xl p-5">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-sm font-bold text-white tracking-wider">সাম্প্রতিক লেনদেন (Recent Ledger)</h3>
+                            <button onclick="switchScreen('transaction_history')" class="text-xs text-[#c5a059] hover:underline">সব দেখুন</button>
+                        </div>
+                        
+                        <div class="space-y-3" id="home-recent-transactions">
+                            <!-- JS will load transactions -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 4: SAVINGS ACCOUNT DETAIL -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-savings" class="page-content max-w-3xl mx-auto py-2">
+                    <div class="bg-[#121212] border border-zinc-850 rounded-3xl p-6 mb-6">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <span class="text-xs text-zinc-400 font-bold">সঞ্চয় অ্যাকাউন্ট লেজার</span>
+                                <h3 class="text-2xl font-serif text-white font-extrabold mt-1">সঞ্চয় অ্যাকাউন্ট (Savings A/C)</h3>
+                                <p class="text-xs text-zinc-500 mt-1">সুদের হার: ৮% (ফিক্সড ডিপোজিট)</p>
+                            </div>
+                            <span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] rounded font-bold uppercase tracking-wider">সচল</span>
+                        </div>
+
+                        <div class="p-5 bg-zinc-950 rounded-2xl border border-zinc-850 text-center mb-6">
+                            <span class="text-xs text-zinc-500 font-mono">AVAILABLE NET BALANCES</span>
+                            <div class="text-4xl font-serif text-[#c5a059] font-black mt-2" id="savings-detail-balance">৳ ২,৫০,০০০.০০</div>
+                            <p class="text-[11px] text-zinc-500 mt-1 font-serif">আপডেট করা হয়েছে: এইমাত্র</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="switchScreen('deposit')" class="py-3 bg-emerald-500 hover:bg-emerald-600 text-black text-xs font-bold rounded-xl transition-all text-center">
+                                টাকা জমা করুন
+                            </button>
+                            <button onclick="switchScreen('withdraw')" class="py-3 bg-[#c5a059] hover:bg-gold-600 text-black text-xs font-bold rounded-xl transition-all text-center">
+                                টাকা উত্তোলন করুন
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 5: CASH IN / DEPOSIT -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-deposit" class="page-content max-w-xl mx-auto py-2">
+                    <div class="bg-[#121212] border border-zinc-850 rounded-3xl p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <button onclick="switchScreen('home')" class="p-2 bg-zinc-900 rounded-xl text-xs hover:bg-zinc-800 text-zinc-400 hover:text-white">← ফেরত</button>
+                            <h3 class="text-base font-extrabold text-white">তহবিল জমা দিন (Cash In Gateways)</h3>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="text-xs text-zinc-400 font-bold block mb-1">জমার পরিমাণ (Amount in BDT)</label>
+                            <input type="number" id="deposit-amount" value="১০০০০" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm text-white font-sans focus:outline-none focus:border-gold-500" placeholder="৳ সর্বনিম্ন ১,০০০">
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="text-xs text-zinc-400 font-bold block mb-3">জমার পেমেন্ট মেথড নির্বাচন করুন</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="selectDepositGateway('bkash')" id="gateway-dep-bkash" class="p-4 border-2 border-zinc-800 bg-[#18181b] rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer select-none">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/BKash_logo.svg/512px-BKash_logo.svg.png" alt="bKash" class="h-6 object-contain">
+                                    <span class="text-xs font-bold text-zinc-400">বিকাশ পেমেন্ট</span>
+                                </button>
+                                
+                                <button onclick="selectDepositGateway('nagad')" id="gateway-dep-nagad" class="p-4 border-2 border-[#18181b] bg-[#18181b] rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer select-none">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c5/Nagad_logo.svg" alt="Nagad" class="h-7 object-contain">
+                                    <span class="text-xs font-bold text-zinc-300">নগদ পেমেন্ট</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button onclick="actionProcessDeposit()" class="w-full py-3 bg-[#c5a059] hover:bg-gold-600 text-black font-extrabold text-xs rounded-xl transition-all shadow-md">
+                            পেমেন্ট গেটওয়েতে এগিয়ে যান
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 6: CASH OUT / WITHDRAW -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-withdraw" class="page-content max-w-xl mx-auto py-2">
+                    <div class="bg-[#121212] border border-zinc-850 rounded-3xl p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <button onclick="switchScreen('savings')" class="p-2 bg-zinc-900 rounded-xl text-xs hover:bg-zinc-800 text-zinc-400 hover:text-white">← ফেরত</button>
+                            <h3 class="text-base font-extrabold text-white">তহবিল উত্তোলন করুন (Cash Out)</h3>
+                        </div>
+
+                        <div class="mb-5 bg-zinc-950 p-4 rounded-xl text-center border border-zinc-850">
+                            <span class="text-[11px] text-zinc-400 block">বর্তমান সঞ্চয় স্থিতি</span>
+                            <span class="text-2xl font-serif text-[#c5a059] font-extrabold" id="withdraw-current-balance">৳ ২,৫০,০০০.০০</span>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="text-xs text-zinc-400 font-bold block mb-1">উত্তোলনের পরিমাণ (Amount in BDT)</label>
+                            <input type="number" id="withdraw-amount" value="৫০০০" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm text-white font-sans focus:outline-none focus:border-gold-500" placeholder="৳ ১,০০০ - ১০০,০০০">
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="text-xs text-zinc-400 font-bold block mb-2">উত্তোলনের মাধ্যম নির্বাচন</label>
+                            <select id="withdraw-method" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-gold-500">
+                                <option value="bank" selected>অনলাইন ব্যাংক ট্র্যান্সফার</option>
+                                <option value="bkash">বিকাশ ওয়ালেট</option>
+                                <option value="nagad">নগদ ওয়ালেট</option>
+                            </select>
+                        </div>
+
+                        <button onclick="actionProcessWithdraw()" class="w-full py-3 bg-red-500 hover:bg-red-650 text-white font-extrabold text-xs rounded-xl transition-all shadow-md">
+                            উত্তোলনের প্রক্রিয়া সম্পন্ন করুন
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 7: APPLY NEW LOAN -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-loan_apply" class="page-content max-w-2xl mx-auto py-2">
+                    <div class="bg-[#121212] border border-zinc-850 rounded-3xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-base font-extrabold text-white">নতুন ঋণের আবেদনপত্র (Apply for Micro-Loan)</h3>
+                            <button onclick="switchScreen('loan_calculator')" class="text-xs text-[#c5a059] hover:underline">ক্যালকুলেটর</button>
+                        </div>
+
+                        <!-- Wizard steps progress indicator -->
+                        <div class="flex justify-between items-center bg-zinc-950 p-3 rounded-2xl mb-6 border border-zinc-900/60 text-xs">
+                            <span class="text-[#c5a059] font-bold">১. বিবরণাদি</span>
+                            <span class="text-zinc-500">২. নথিপত্র</span>
+                            <span class="text-zinc-500">৩. রিভিউ</span>
+                        </div>
+
+                        <!-- Application form -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs text-zinc-400 font-bold block mb-1">ঋণের ধরণ নির্বাচন করুন (Loan Purpose)</label>
+                                <select id="loan-category" onchange="updateLoanTerms()" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm text-white focus:outline-none">
+                                    <option value="business" selected>ক্ষুদ্র ব্যবসা ঋণ (সুদ ৯%)</option>
+                                    <option value="agriculture">কৃষি ও খামার উন্নয়ন ঋণ (সুদ ৭%)</option>
+                                    <option value="education">শিক্ষা বৃত্তি ঋণ (সুদ ৫%)</option>
+                                    <option value="emergency">জরুরি সামাজিক সাহায্য ঋণ (সুদ ৪%)</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-xs text-zinc-400 font-bold block mb-1">আবেদনের পরিমাণ (৳)</label>
+                                    <input type="number" id="loan-amount" value="50000" oninput="calculateLoanEmi()" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm text-white font-sans focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-zinc-400 font-bold block mb-1">সময়সীমা (মাস)</label>
+                                    <select id="loan-duration" onchange="calculateLoanEmi()" class="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm text-white focus:outline-none font-sans">
+                                        <option value="6" selected>৬ মাস</option>
+                                        <option value="12">১২ মাস</option>
+                                        <option value="18">১৮ মাস</option>
+                                        <option value="24">২৪ মাস</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- EMI Estimates block -->
+                            <div class="bg-zinc-950 rounded-2xl p-4 border border-zinc-850 space-y-2 text-xs">
+                                <div class="flex justify-between">
+                                    <span class="text-zinc-400">বার্ষিক সুদের হার:</span>
+                                    <span class="text-white font-bold" id="loan-interest-rate-label">৯%</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-zinc-400">আনুমানিক মাসিক কিস্তি (EMI):</span>
+                                    <span class="text-[#c5a059] font-bold" id="loan-emi-estimate-label">৳ ৮,৫৪৫.০০ / মাস</span>
+                                </div>
+                            </div>
+
+                            <button onclick="actionSubmitLoanPart1()" class="w-full py-3 bg-[#c5a059] hover:bg-gold-600 text-black font-extrabold text-sm rounded-xl transition-all shadow-md">
+                                পরবর্তী ধাপে এগিয়ে যান
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 8: LOAN CALCULATOR -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-loan_calculator" class="page-content max-w-2xl mx-auto py-2">
+                    <div class="bg-[#121212] border border-zinc-850 rounded-3xl p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <button onclick="switchScreen('loan_apply')" class="p-2 bg-zinc-900 rounded-xl text-xs hover:bg-zinc-800 text-zinc-400 hover:text-white">← ফেরত</button>
+                            <h3 class="text-base font-extrabold text-white">ঋণের কিস্তি হিসাব করুন (Emi Calc)</h3>
+                        </div>
+
+                        <div class="bg-zinc-950 p-5 rounded-2xl border border-zinc-850 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                            <div>
+                                <span class="text-xs text-zinc-400 uppercase tracking-widest block">হিসাবকৃত মাসিক কিস্তি</span>
+                                <h4 class="text-3xl font-serif text-[#c5a059] font-black mt-1" id="calc-emi-result">৳ ৪,৩৮৩.৩৩</h4>
+                                <p class="text-[10px] text-zinc-500 mt-0.5">মুনাফা এবং মূল পরিমাণ সম্বলিত মোট পরিশোধের অংশ</p>
+                            </div>
+                            <button onclick="switchScreen('loan_apply')" class="px-5 py-2.5 bg-[#c5a059]/15 hover:bg-[#c5a059]/30 text-[#dfc187] rounded-xl text-xs font-bold transition-all border border-[#c5a059]/25 shrink-0">
+                                আবেদন করুন
+                            </button>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs text-zinc-400 font-bold block mb-1.5">ঋণের পরিমাণ নির্ধারণ (৳ <span id="val-range-amount">৫০,০০০</span>)</label>
+                                <input type="range" id="range-amount" min="10000" max="250000" step="5000" value="50000" oninput="actionTriggerCalculatorUpdate()" class="w-full accent-[#c5a059]">
+                            </div>
+
+                            <div>
+                                <label class="text-xs text-zinc-400 font-bold block mb-1.5">পরিশোধের মেয়াদ (মাসে <span id="val-range-duration">১২</span>)</label>
+                                <input type="range" id="range-duration" min="3" max="24" step="3" value="12" oninput="actionTriggerCalculatorUpdate()" class="w-full accent-[#c5a059]">
+                            </div>
+
+                            <div>
+                                <label class="text-xs text-zinc-400 font-bold block mb-1.5">বার্ষিক মুনাফার হার (<span id="val-range-rate">৮</span>%)</label>
+                                <input type="range" id="range-rate" min="2" max="15" step="0.5" value="8" oninput="actionTriggerCalculatorUpdate()" class="w-full accent-[#c5a059]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 9: LOANS LIST / ACTIVE LOANS TRACKING -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-loan_status" class="page-content max-w-4xl mx-auto py-2">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <span class="text-xs text-zinc-400 font-bold block">আপনার আবেদনকৃত ঋণ তালিকা</span>
+                            <h2 class="text-xl font-serif text-white font-extrabold mt-1">সক্রিয় ঋণের বর্তমান স্থিতি (Loan Tracking)</h2>
+                        </div>
+                        <button onclick="switchScreen('loan_apply')" class="px-4 py-2 bg-[#c5a059] hover:bg-gold-600 text-black text-xs font-extrabold rounded-xl transition-all">
+                            + নতুন ঋণ আবেদন
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4" id="loan-items-container">
+                        <!-- Simulated Loans will load dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 10: EMI SCHEDULE / INSTALLMENT PAYMENTS -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-emi_schedule" class="page-content max-w-4xl mx-auto py-2">
+                    <div class="bg-[#121212] border border-zinc-850 rounded-3xl p-6">
+                        <span class="text-xs text-zinc-400 block mb-1">পরিশোধযোগ্য কিস্তির সময়সূচী</span>
+                        <h2 class="text-xl font-serif text-white font-extrabold">কিস্তি পরিশোধ প্যানেল (EMI Repayment Console)</h2>
+                        <p class="text-xs text-zinc-400 mt-1">বিকাশ বা নগদের অনলাইন চেকআউট পেমেন্ট গেটওয়ে দিয়ে সরাসরি কিস্তি পরিশোধ সম্পন্ন করতে নিচে ক্লিক করুন।</p>
+
+                        <div class="mt-6 overflow-x-auto">
+                            <table class="w-full text-xs text-left" id="emi-schedule-table">
+                                <thead>
+                                    <tr class="text-zinc-400 border-b border-zinc-800">
+                                        <th class="py-3 font-semibold">কিস্তি সংখ্যা</th>
+                                        <th class="py-3 font-semibold">টাকার পরিমাণ</th>
+                                        <th class="py-3 font-semibold">তারিখ</th>
+                                        <th class="py-3 font-semibold">স্ট্যাটাস</th>
+                                        <th class="py-3 font-semibold text-right">অ্যাকশন</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-zinc-900/60">
+                                    <!-- Dynamic rows loaded via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 11: TRANSACTION HISTORY -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-transaction_history" class="page-content max-w-3xl mx-auto py-2">
+                    <div class="bg-[#121212] border border-zinc-850 rounded-3xl p-6">
+                        <h2 class="text-lg font-serif text-white font-extrabold mb-4">লেনদেন লেজার খাতা (Transaction Ledger Log)</h2>
+                        
+                        <div class="space-y-3" id="ledger-transactions-container">
+                            <!-- Transactions dynamically loaded -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 12: NOTIFICATIONS MODULE -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-notifications" class="page-content max-w-3xl mx-auto py-2">
+                    <div class="bg-[#121212] border border-zinc-850 rounded-3xl p-6 animate-fade-in">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-lg font-serif text-white font-extrabold">সিস্টেম নোটিফিকেশন সমূহ</h2>
+                            <div class="flex gap-2">
+                                <button onclick="actionMarkAllNotifsRead()" class="text-xs text-[#c5a059] hover:underline">পড়া চিহ্নিত করুন</button>
+                                <span class="text-zinc-600">|</span>
+                                <button onclick="actionClearAllNotifs()" class="text-xs text-zinc-400 hover:underline">সব মুছুন</button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3" id="notifications-list-container">
+                            <!-- Loaded via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ----------------------------------------- -->
+                <!-- SCREEN 13: USER PROFILE -->
+                <!-- ----------------------------------------- -->
+                <div id="screen-profile" class="page-content max-w-2xl mx-auto py-2">
+                    <div class="bg-[#121212] border border-zinc-850 rounded-3xl p-6">
+                        <div class="text-center pb-6 border-b border-zinc-800 mb-6">
+                            <div class="w-16 h-16 bg-[#c5a059]/10 text-white border border-[#c5a059]/25 text-3xl rounded-full flex items-center justify-center mx-auto mb-3">👤</div>
+                            <h3 class="text-lg font-serif text-white font-extrabold mb-1" id="profile-user-name">আরিফ রহমান</h3>
+                            <span class="text-xs text-zinc-500 font-mono px-2 py-0.5 bg-zinc-900 rounded-full border border-zinc-850">01712345678</span>
+                        </div>
+
+                        <div class="space-y-4 text-xs">
+                            <div class="bg-zinc-950 p-4 border border-zinc-850 rounded-xl space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-zinc-400">অ্যাকাউন্ট ভেরিফিকেশন:</span>
+                                    <span class="text-emerald-400 font-bold">ভেরিফাইড (verified)</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-zinc-400">ঋণ যোগ্যতা লিমিট:</span>
+                                    <span class="text-white font-bold">৳ ২,৫০,০০০.০০</span>
+                                </div>
+                            </div>
+
+                            <button onclick="actionLogOutUser()" class="w-full py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 font-bold rounded-xl transition-all">
+                                সিকিউর লগআউট (Secure Log Out)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- DYNAMIC MOBILE BOTTOM NAVIGATION (সিমুলেটর ন্যাভ-বার) -->
+            <!-- ========================================================== -->
+            <div id="portal-bottom-tabs" class="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto shrink-0 bg-[#0c0c0e]/95 backdrop-blur-md border-t border-zinc-900 px-4 py-2.5 z-40 flex justify-center items-center text-zinc-500 select-none">
+                <div class="w-full max-w-xl flex justify-between items-center gap-2">
+                    <button onclick="switchScreen('home')" id="tab-home" class="flex flex-col items-center gap-1 flex-1 py-1 px-1 transition-all text-[#c5a059]">
+                        <span class="text-lg">🏠</span>
+                        <span class="text-[10px] font-bold">হোম</span>
+                    </button>
+                    <button onclick="switchScreen('savings')" id="tab-savings" class="flex flex-col items-center gap-1 flex-1 py-1 px-1 transition-all hover:text-zinc-300">
+                        <span class="text-lg">🐷</span>
+                        <span class="text-[10px] font-bold">সঞ্চয়</span>
+                    </button>
+                    <button onclick="switchScreen('loan_status')" id="tab-loan_status" class="flex flex-col items-center gap-1 flex-1 py-1 px-1 transition-all hover:text-zinc-300">
+                        <span class="text-lg">📝</span>
+                        <span class="text-[10px] font-bold">ঋণ ট্র্যাকার</span>
+                    </button>
+                    <button onclick="switchScreen('emi_schedule')" id="tab-emi_schedule" class="flex flex-col items-center gap-1 flex-1 py-1 px-1 transition-all hover:text-zinc-300">
+                        <span class="text-lg">💳</span>
+                        <span class="text-[10px] font-bold">পেমেন্ট</span>
+                    </button>
+                    <button onclick="switchScreen('profile')" id="tab-profile" class="flex flex-col items-center gap-1 flex-1 py-1 px-1 transition-all hover:text-zinc-300">
+                        <span class="text-lg">👤</span>
+                        <span class="text-[10px] font-bold">প্রোফাইল</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- OVERLAY GATEWAY: BKASH CHECKOUT PORTAL MODAL -->
+    <!-- ========================================================== -->
+    <div id="overlay-bkash-checkout" class="fixed inset-0 bg-[#bdbdbd]/80 z-[9999] justify-center items-center p-4 overflow-y-auto hidden">
+        <div class="w-full max-w-[500px] bg-white border border-[#cfcfcf] shadow-2xl flex flex-col rounded-xl overflow-hidden">
+            <!-- Brand header -->
+            <div class="bg-white text-zinc-800 px-5 py-4 flex items-center justify-start text-[16px] font-extrabold border-b border-[#e5e5e5]">
+                Nano-Finance • বিকাশ গেটওয়ে
+            </div>
+            <!-- Logo area -->
+            <div class="h-[48px] flex items-center justify-center border-b border-[#e5e5e5] bg-white">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/BKash_logo.svg/512px-BKash_logo.svg.png" alt="bKash Logo" class="h-[28px] object-contain">
+            </div>
+
+            <!-- Merchant block -->
+            <div class="bg-[#fafafa] flex items-center justify-between border-b border-[#e5e5e5] px-6 py-3 text-xs md:text-sm">
+                <div>
+                    <p class="font-bold text-[#e2136e]">ন্যানো-ফাইন্যান্স লিমিটেড</p>
+                    <p class="text-zinc-400 text-[11px] font-mono">Invoice: BK-EMI-10125</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-zinc-500 text-[10px] uppercase font-bold">Amount (টাকা)</p>
+                    <p class="font-extrabold font-serif text-zinc-800" id="bkash-checkout-amount">৳ ৮,৫৪৫.০০</p>
+                </div>
+            </div>
+
+            <!-- Primary dynamic area -->
+            <div class="bg-[#e2136e] flex flex-col items-center justify-center p-6 text-white text-center min-h-[220px]">
+                <h4 class="text-sm font-semibold mb-3" id="bkash-prompt-label">বিকাশ মোবাইল অ্যাকাউন্ট নাম্বার দিন</h4>
+                
+                <input type="tel" id="bkash-phone-input" value="01712345678" class="text-center w-full max-w-[280px] text-lg font-mono py-2 bg-white text-zinc-900 rounded-lg focus:outline-none border border-zinc-200">
+                
+                <p class="text-[10px] mt-4 opacity-80 leading-relaxed max-w-[340px]">বিকাশ অ্যাকাউন্টধারীকে বার্ষিক সঞ্চয় কিস্তি পরিশোধ করতে হবে। এই ডেমো পরিশোধটি কোনো প্রকৃত টাকা কাটবে না।</p>
+            </div>
+
+            <!-- Footer control -->
+            <div class="bg-[#fafafa] p-4 flex gap-3 text-xs border-t border-[#e2136e]">
+                <button onclick="actionCancelBkashPayment()" class="flex-1 py-3 text-zinc-600 bg-zinc-200 hover:bg-zinc-300 font-bold rounded-lg text-center">বাতিল</button>
+                <button onclick="actionConfirmBkashPayment()" class="flex-1 py-3 text-white bg-[#e2136e] hover:bg-[#c1105e] font-bold rounded-lg text-center uppercase tracking-wide">নিশ্চিত করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- OVERLAY GATEWAY: NAGAD CHECKOUT PORTAL MODAL -->
+    <!-- ========================================================== -->
+    <div id="overlay-nagad-checkout" class="fixed inset-0 bg-black/75 z-[9999] justify-center items-center p-4 overflow-y-auto hidden">
+        <div class="w-full max-w-[500px] bg-[#9d0913] text-white shadow-2xl flex flex-col rounded-2xl overflow-hidden border border-white/10 nagad-radial-bg">
+            <div class="p-5 flex justify-between items-center border-b border-white/10">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c5/Nagad_logo.svg" alt="Nagad Logo" class="h-8 object-contain">
+                <div class="text-right">
+                    <p class="text-[10px] text-zinc-300 uppercase font-bold block">কিস্তি পরিশোধ</p>
+                    <span class="text-lg font-serif font-black" id="nagad-checkout-amount">৳ ৪,৩৮৩.০০</span>
+                </div>
+            </div>
+
+            <div class="p-6 flex flex-col items-center justify-center text-center">
+                <span class="text-2xl mb-4">💳</span>
+                <span class="text-sm font-semibold mb-1 block">আপনার নগদ একাউন্ট নম্বর দিন</span>
+                
+                <input type="tel" id="nagad-phone-input" value="01712345678" class="text-center w-full max-w-[280px] text-lg font-mono py-2.5 bg-white text-zinc-900 rounded-xl focus:outline-none placeholder-zinc-400 mt-2 font-bold focus:ring-2 focus:ring-[#ff1224]" placeholder="017XXXXXXXX">
+                
+                <p class="text-[10px] text-zinc-300/80 mt-4 leading-normal max-w-[340px]">নগদ অ্যাকাউন্ট সিকিউর পেমেন্ট গেটওয়ে। এটি একটি ডেমো পেমেন্ট।</p>
+            </div>
+
+            <!-- Footer controls -->
+            <div class="bg-black/30 p-4 flex gap-3 text-xs">
+                <button onclick="actionCancelNagadPayment()" class="flex-1 py-3 text-zinc-300 bg-white/10 hover:bg-white/20 font-bold rounded-xl text-center">বাতিল করুন</button>
+                <button onclick="actionConfirmNagadPayment()" class="flex-1 py-3 text-white bg-amber-500 hover:bg-amber-600 font-extrabold rounded-xl text-center shadow-lg">পরবর্তী</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // ==========================================================
+        // LOCAL STATE DATA (সিমুলেটেড লেজার ডাটাবেস)
+        // ==========================================================
+        let currentUser = {
+            name: "আরিফ রহমান",
+            phone: "01712345678",
+            accountNo: "১০১২৫৩২৪৮০"
+        };
+        
+        let savingsBalance = 250000;
+        
+        let transactions = [
+            { id: "TX10291", title: "নগদ ডিপোজিট", date: "০৭ জুন, ২০২৬", amount: 15000, type: "deposit", status: "completed" },
+            { id: "TX10148", title: "বিকাশ কিস্তি পরিশোধ", date: "০৪ জুন, ২০২৬", amount: 8545, type: "loan_repay", status: "completed" },
+            { id: "TX09941", title: "উত্তোলন সম্পন্ন", date: "০১ জুন, ২০২৬", amount: 5000, type: "withdraw", status: "completed" }
+        ];
+
+        let emiInstallments = [
+            { installmentNo: 1, amount: 8545, date: "১০ জুন, ২০২৬", status: "unpaid" },
+            { installmentNo: 2, amount: 8545, date: "১০ জুলাই, ২০২৬", status: "unpaid" },
+            { installmentNo: 3, amount: 8545, date: "১০ আগস্ট, ২০২৬", status: "unpaid" }
+        ];
+
+        let activeLoans = [
+            { id: "LN102", category: "ক্ষুদ্র ব্যবসা ঋণ", amount: 120000, date: "০৩ মে, ২০২৬", status: "approved" },
+            { id: "LN151", category: "শিক্ষা বৃত্তি ঋণ", amount: 45000, date: "০১ জুন, ২০২৬", status: "pending" }
+        ];
+
+        let pendingDepositAmount = 0;
+        let pendingDepositGateway = 'bkash';
+        let pendingEmiInstallmentNo = null;
+
+        // ==========================================================
+        // DYNAMIC SCREEN MANAGER (স্ক্রিন সুইচার)
+        // ==========================================================
+        function switchScreen(screenId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            // Show target page
+            const targetPage = document.getElementById('screen-' + screenId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+
+            // Update Control Sidebar active button state
+            document.querySelectorAll('#screen-navigation-list button').forEach(el => {
+                el.classList.remove('active', 'bg-[#c5a059]/15', 'border-[#c5a059]/30', 'text-white', 'font-extrabold', 'shadow-sm');
+                el.classList.add('bg-transparent', 'border-transparent', 'text-zinc-500');
+            });
+            const activeWarpBtn = document.getElementById('btn-' + screenId);
+            if (activeWarpBtn) {
+                activeWarpBtn.classList.remove('bg-transparent', 'border-transparent', 'text-zinc-500');
+                activeWarpBtn.classList.add('active', 'bg-[#c5a059]/15', 'border-[#c5a059]/30', 'text-white', 'font-extrabold', 'shadow-sm');
+            }
+
+            // Update Bottom Nav active states
+            document.querySelectorAll('#portal-bottom-tabs button').forEach(el => {
+                el.classList.remove('text-[#c5a059]');
+                el.classList.add('text-zinc-500', 'hover:text-zinc-300');
+            });
+            const activeTabBtn = document.getElementById('tab-' + screenId);
+            if (activeTabBtn) {
+                activeTabBtn.classList.add('text-[#c5a059]');
+                activeTabBtn.classList.remove('text-zinc-500', 'hover:text-zinc-300');
+            }
+
+            // Sync update calculations
+            if (screenId === 'home') {
+                renderTransactionsList();
+            } else if (screenId === 'loan_status') {
+                renderLoansList();
+            } else if (screenId === 'emi_schedule') {
+                renderEmiSchedule();
+            }
+
+            // Scroll body to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==========================================================
+        // TEMPLATE LOGIC CONTROLLER (পেইজ ডেটা হ্যান্ডলার)
+        // ==========================================================
+        function toBanglaDigits(num) {
+            const banglaNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return num.toString().replace(/\d/g, x => banglaNumbers[parseInt(x)]);
+        }
+
+        function updateBalanceUI() {
+            const formatted = '৳ ' + savingsBalance.toLocaleString('bn-BD') + '.০০';
+            document.getElementById('dashboard-balance').innerText = formatted;
+            document.getElementById('savings-detail-balance').innerText = formatted;
+            document.getElementById('withdraw-current-balance').innerText = formatted;
+        }
+
+        // 1. Transaction rendering
+        function renderTransactionsList() {
+            const container = document.getElementById('home-recent-transactions');
+            const ledgerContainer = document.getElementById('ledger-transactions-container');
+            let htmlContent = "";
+
+            transactions.forEach(t => {
+                const isPositive = t.type === 'deposit';
+                const sign = isPositive ? '+' : '-';
+                const color = isPositive ? 'text-emerald-400' : 'text-rose-400';
+                const bg = isPositive ? 'bg-emerald-500/10' : 'bg-rose-500/10';
+
+                htmlContent += `
+                    <div class="flex items-center justify-between p-3.5 bg-zinc-900/40 rounded-xl border border-zinc-900">
+                        <div class="flex items-center gap-3">
+                            <div class="h-8 w-8 rounded-lg flex items-center justify-center text-sm ${bg}">
+                                ${isPositive ? '📥' : '📤'}
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-white">${t.title}</h4>
+                                <p class="text-[9px] text-zinc-500 font-serif mt-0.5">${t.date} • ID: ${t.id}</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-extrabold ${color}">${sign}৳ ${toBanglaDigits(t.amount)}</span>
+                    </div>
+                `;
+            });
+
+            if (container) container.innerHTML = htmlContent;
+            if (ledgerContainer) ledgerContainer.innerHTML = htmlContent;
+        }
+
+        // 2. Active Loans tracker list
+        function renderLoansList() {
+            const container = document.getElementById('loan-items-container');
+            let htmlContent = "";
+
+            activeLoans.forEach(loan => {
+                const isPending = loan.status === 'pending';
+                const statusColor = isPending ? 'text-amber-400 bg-amber-500/15 border-amber-500/25' : 'text-emerald-400 bg-emerald-500/15 border-emerald-500/25';
+                const statusText = isPending ? 'ঋণ আবেদন পেন্ডিং' : 'ঋণ সচল (অনুমোদিত)';
+
+                htmlContent += `
+                    <div class="bg-[#121212] border border-zinc-850 p-5 rounded-3xl">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-start gap-3 mb-4">
+                            <div>
+                                <span class="text-[9px] bg-zinc-900 text-[#c5a059] px-2 py-0.5 rounded font-bold font-mono tracking-wider">ঋণ ID: ${loan.id}</span>
+                                <h4 class="text-sm font-serif font-extrabold text-white mt-1.5">${loan.category}</h4>
+                                <p class="text-[10px] text-zinc-500">আবেদনের তারিখ: ${loan.date}</p>
+                            </div>
+                            <span class="px-2.5 py-0.5 border text-[10px] rounded font-bold ${statusColor}">${statusText}</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 bg-zinc-950 p-3.5 rounded-2xl border border-zinc-900/60 text-xs">
+                            <div>
+                                <span class="text-zinc-500 block">মোট ঋণের মূল্য</span>
+                                <span class="text-sm font-extrabold text-[#c5a059]">৳ ${toBanglaDigits(loan.amount)}</span>
+                            </div>
+                            <div>
+                                <span class="text-zinc-500 block">বর্তমান স্ট্যাটাস</span>
+                                <span class="text-sm font-bold text-white">${isPending ? 'যাচাইকরণ প্রক্রিয়া চলছে' : 'নিয়মিত কিস্তি প্রদান'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (container) container.innerHTML = htmlContent;
+        }
+
+        // 3. EMI/Installments schedule
+        function renderEmiSchedule() {
+            const tableBody = document.querySelector('#emi-schedule-table tbody');
+            let htmlContent = "";
+
+            emiInstallments.forEach(emi => {
+                const isUnpaid = emi.status === 'unpaid';
+                const labelColor = isUnpaid ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-400';
+                const labelText = isUnpaid ? 'পরিশোধযোগ্য' : 'পরিশোধিত';
+
+                const actionButton = isUnpaid 
+                    ? `<button onclick="actionInitiateEmiPayment(${emi.installmentNo}, ${emi.amount})" class="px-4 py-1.5 bg-[#c5a059] hover:bg-gold-600 text-black text-[10px] font-extrabold rounded-lg transition-colors cursor-pointer">পরিশোধ করুন</button>`
+                    : `<span class="text-[10px] text-zinc-500">সম্পন্ন ✔</span>`;
+
+                htmlContent += `
+                    <tr>
+                        <td class="py-3 font-semibold text-zinc-300 font-sans">#${emi.installmentNo} কিস্তি</td>
+                        <td class="py-3 font-bold font-serif">৳ ${toBanglaDigits(emi.amount)}</td>
+                        <td class="py-3 text-zinc-400 font-sans">${emi.date}</td>
+                        <td class="py-3">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${labelColor}">${labelText}</span>
+                        </td>
+                        <td class="py-3 text-right">${actionButton}</td>
+                    </tr>
+                `;
+            });
+
+            if (tableBody) tableBody.innerHTML = htmlContent;
+        }
+
+        // ==========================================================
+        // ACTIONS & SIMULATIONS (কার্যকলাপ হ্যান্ডলিং)
+        // ==========================================================
+        function selectDepositGateway(method) {
+            pendingDepositGateway = method;
+            document.getElementById('gateway-dep-bkash').className = method === 'bkash' 
+                ? 'p-4 border-2 border-[#e2136e] bg-[#18181b] rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer select-none' 
+                : 'p-4 border-2 border-zinc-800 bg-[#18181b] rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer select-none';
+            
+            document.getElementById('gateway-dep-nagad').className = method === 'nagad' 
+                ? 'p-4 border-2 border-[#ff1224] bg-[#1a0f10] rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer select-none' 
+                : 'p-4 border-2 border-transparent bg-[#18181b] rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer select-none';
+        }
+
+        function toggleAuthTab(tab) {
+            if (tab === 'signin') {
+                document.getElementById('auth-panel-signin').classList.remove('hidden');
+                document.getElementById('auth-panel-signup').classList.add('hidden');
+                document.getElementById('login-tab-signin').className = 'text-sm font-bold text-white border-b-2 border-[#c5a059] pb-2 px-4 transition-all';
+                document.getElementById('login-tab-signup').className = 'text-sm font-bold text-zinc-500 pb-2 px-4 hover:text-zinc-300 transition-all ml-4';
+            } else {
+                document.getElementById('auth-panel-signin').classList.add('hidden');
+                document.getElementById('auth-panel-signup').classList.remove('hidden');
+                document.getElementById('login-tab-signin').className = 'text-sm font-bold text-zinc-500 pb-2 px-4 hover:text-zinc-300 transition-all';
+                document.getElementById('login-tab-signup').className = 'text-sm font-bold text-white border-b-2 border-[#c5a059] pb-2 px-4 transition-all ml-4';
+            }
+        }
+
+        function updateLoanTerms() {
+            const dropdown = document.getElementById('loan-category');
+            const rateLabel = document.getElementById('loan-interest-rate-label');
+            let rate = "9%";
+            
+            if (dropdown.value === 'agriculture') rate = "7%";
+            else if (dropdown.value === 'education') rate = "5%";
+            else if (dropdown.value === 'emergency') rate = "4%";
+
+            rateLabel.innerText = rate;
+            calculateLoanEmi();
+        }
+
+        function calculateLoanEmi() {
+            const amount = parseFloat(document.getElementById('loan-amount').value) || 0;
+            const months = parseInt(document.getElementById('loan-duration').value) || 12;
+            const dropdown = document.getElementById('loan-category');
+            
+            let rate = 0.09;
+            if (dropdown.value === 'agriculture') rate = 0.07;
+            else if (dropdown.value === 'education') rate = 0.05;
+            else if (dropdown.value === 'emergency') rate = 0.04;
+
+            const totalRepayment = amount + (amount * rate * (months / 12));
+            const emi = totalRepayment / months;
+            
+            document.getElementById('loan-emi-estimate-label').innerText = '৳ ' + toBanglaDigits(Math.round(emi).toLocaleString('bn-BD')) + '.০০ / মাস';
+        }
+
+        function actionTriggerCalculatorUpdate() {
+            const amountVal = document.getElementById('range-amount').value;
+            const durationVal = document.getElementById('range-duration').value;
+            const rateVal = document.getElementById('range-rate').value;
+
+            document.getElementById('val-range-amount').innerText = parseFloat(amountVal).toLocaleString('bn-BD');
+            document.getElementById('val-range-duration').innerText = toBanglaDigits(durationVal);
+            document.getElementById('val-range-rate').innerText = toBanglaDigits(rateVal);
+
+            const amount = parseFloat(amountVal);
+            const months = parseInt(durationVal);
+            const rate = parseFloat(rateVal) / 100;
+
+            const emi = (amount + (amount * rate * (months / 12))) / months;
+            document.getElementById('calc-emi-result').innerText = '৳ ' + toBanglaDigits(Math.round(emi).toLocaleString('bn-BD'));
+        }
+
+        // Simulators login
+        function actionSimulateLogin() {
+            const phone = document.getElementById('signin-phone').value;
+            if (phone.length < 5) {
+                alert('দয়া করে সঠিক মোবাইল নম্বর ব্যবহার করুন।');
+                return;
+            }
+            currentUser.name = "আরিফ রহমান";
+            currentUser.phone = phone.includes('০') ? '01712345678' : phone;
+
+            document.getElementById('home-greeting-name').innerText = currentUser.name;
+            document.getElementById('profile-user-name').innerText = currentUser.name;
+            switchScreen('home');
+        }
+
+        function actionSimulateSignUp() {
+            const name = document.getElementById('signup-name').value || "ভেরিফাইড গ্রাহক";
+            const phone = document.getElementById('signup-phone').value || "01729384756";
+            
+            currentUser.name = name;
+            currentUser.phone = phone;
+            
+            document.getElementById('home-greeting-name').innerText = currentUser.name;
+            document.getElementById('profile-user-name').innerText = currentUser.name;
+            switchScreen('home');
+        }
+
+        function actionProcessDeposit() {
+            const amount = parseFloat(document.getElementById('deposit-amount').value);
+            if (!amount || amount < 100) {
+                alert('দয়া করে ১০০ টাকার ওপরে পরিমাণ লিখুন।');
+                return;
+            }
+            pendingDepositAmount = amount;
+            
+            if (pendingDepositGateway === 'bkash') {
+                document.getElementById('bkash-checkout-amount').innerText = '৳ ' + toBanglaDigits(amount.toLocaleString('bn-BD')) + '.০০';
+                document.getElementById('overlay-bkash-checkout').style.display = 'flex';
+            } else {
+                document.getElementById('nagad-checkout-amount').innerText = '৳ ' + toBanglaDigits(amount.toLocaleString('bn-BD')) + '.০০';
+                document.getElementById('overlay-nagad-checkout').style.display = 'flex';
+            }
+        }
+
+        function actionProcessWithdraw() {
+            const amount = parseFloat(document.getElementById('withdraw-amount').value);
+            if (!amount || amount > savingsBalance) {
+                alert('দয়া করে সঞ্চিত ব্যালেন্সের নিচে পরিমাণ নির্বাচন করুন।');
+                return;
+            }
+
+            savingsBalance -= amount;
+            updateBalanceUI();
+            
+            transactions.unshift({
+                id: "TX" + Math.floor(10000 + Math.random() * 90000),
+                title: "উত্তোলন সম্পন্ন",
+                date: "আজকে",
+                amount: amount,
+                type: "withdraw",
+                status: "completed"
+            });
+            
+            alert('৳ ' + amount.toLocaleString('bn-BD') + ' সহজে উত্তোলন সম্পন্ন হয়েছে!');
+            switchScreen('savings');
+        }
+
+        function actionSubmitLoanPart1() {
+            const amount = parseFloat(document.getElementById('loan-amount').value);
+            const duration = document.getElementById('loan-duration').value;
+            const categorySelect = document.getElementById('loan-category');
+            const categoryName = categorySelect.options[categorySelect.selectedIndex].text.split('(')[0].trim();
+
+            activeLoans.unshift({
+                id: "LN" + Math.floor(101 + Math.random() * 99),
+                category: categoryName,
+                amount: amount,
+                date: "আজকে",
+                status: "pending"
+            });
+
+            alert('নতুন ঋণের আবেদন জমা নেওয়া হয়েছে! খুব শীঘ্রই অনুমোদিত হবে।');
+            switchScreen('loan_status');
+        }
+
+        // EMI Initiate trigger
+        function actionInitiateEmiPayment(installmentNo, amount) {
+            pendingEmiInstallmentNo = installmentNo;
+            pendingDepositAmount = amount;
+            
+            // Randomly use bKash or Nagad layout based on selection
+            if (installmentNo % 2 === 1) {
+                document.getElementById('bkash-checkout-amount').innerText = '৳ ' + toBanglaDigits(amount.toLocaleString('bn-BD')) + '.০০';
+                document.getElementById('overlay-bkash-checkout').style.display = 'flex';
+            } else {
+                document.getElementById('nagad-checkout-amount').innerText = '৳ ' + toBanglaDigits(amount.toLocaleString('bn-BD')) + '.০০';
+                document.getElementById('overlay-nagad-checkout').style.display = 'flex';
+            }
+        }
+
+        // Confirm gates
+        function actionConfirmBkashPayment() {
+            document.getElementById('overlay-bkash-checkout').style.display = 'none';
+            finalizePayment();
+        }
+
+        function actionCancelBkashPayment() {
+            document.getElementById('overlay-bkash-checkout').style.display = 'none';
+        }
+
+        function actionConfirmNagadPayment() {
+            document.getElementById('overlay-nagad-checkout').style.display = 'none';
+            finalizePayment();
+        }
+
+        function actionCancelNagadPayment() {
+            document.getElementById('overlay-nagad-checkout').style.display = 'none';
+        }
+
+        function finalizePayment() {
+            if (pendingEmiInstallmentNo !== null) {
+                // Paying mortgage EMI
+                emiInstallments = emiInstallments.map(e => {
+                    if (e.installmentNo === pendingEmiInstallmentNo) return { ...e, status: "paid" };
+                    return e;
+                });
+                
+                savingsBalance -= pendingDepositAmount;
+                
+                transactions.unshift({
+                    id: "TX" + Math.floor(10000 + Math.random() * 90000),
+                    title: "কিস্তি পরিশোধ সম্পন্ন",
+                    date: "আজকে",
+                    amount: pendingDepositAmount,
+                    type: "loan_repay",
+                    status: "completed"
+                });
+                
+                alert('কিস্তি পরিশোধ সফল হয়েছে!');
+                pendingEmiInstallmentNo = null;
+                switchScreen('emi_schedule');
+            } else {
+                // Adding deposit funds
+                savingsBalance += pendingDepositAmount;
+                
+                transactions.unshift({
+                    id: "TX" + Math.floor(10000 + Math.random() * 90000),
+                    title: "তহবিল জমা (ডিপোজিট)",
+                    date: "আজকে",
+                    amount: pendingDepositAmount,
+                    type: "deposit",
+                    status: "completed"
+                });
+                
+                alert('৳ ' + pendingDepositAmount.toLocaleString('bn-BD') + ' সফলভাবে সিস্টেমে যুক্ত হয়েছে!');
+                switchScreen('savings');
+            }
+            updateBalanceUI();
+        }
+
+        // Notification center
+        function actionMarkAllNotifsRead() {
+            document.getElementById('badge-notif-count').style.display = 'none';
+            alert('সকল নোটিফিকেশন পড়া ক্যাটাগরিতে সচল করা হয়েছে।');
+        }
+
+        function actionClearAllNotifs() {
+            document.getElementById('notifications-list-container').innerHTML = `
+                <div class="text-center py-12 text-zinc-500">
+                    <p>কোনো নতুন বিজ্ঞপ্তি নেই</p>
+                </div>
+            `;
+            document.getElementById('badge-notif-count').style.display = 'none';
+        }
+
+        function actionLogOutUser() {
+            alert('সফল ও সিকিউর লগআউট সম্পন্ন হয়েছে।');
+            switchScreen('splash');
+        }
+
+        // On Load Init
+        window.addEventListener('DOMContentLoaded', () => {
+            updateBalanceUI();
+            renderTransactionsList();
+            
+            // Populate defaults on list logs
+            const notifContainer = document.getElementById('notifications-list-container');
+            if (notifContainer) {
+                notifContainer.innerHTML = `
+                    <div class="p-4 bg-zinc-900/60 rounded-xl border border-zinc-850/80 mb-2">
+                        <h4 class="text-xs font-bold text-[#c5a059] mb-1">অ্যাকাউন্ট ভেরিফিকেশন সম্পন্ন</h4>
+                        <p class="text-zinc-400 text-xs text-[11px]">আপনার ন্যানো-ফাইন্যান্স ওয়ালেট সচল হয়েছে। স্বাগতম!</p>
+                    </div>
+                    <div class="p-4 bg-zinc-900/60 rounded-xl border border-zinc-850/80 mb-2">
+                        <h4 class="text-xs font-bold text-emerald-400 mb-1">সঞ্চয় বোনাস যুক্ত হয়েছে</h4>
+                        <p class="text-zinc-400 text-xs text-[11px]">৳ ২৫০,০০০.০০ এফডিআর একাউন্টে বোনাস যুক্ত করা হয়েছে।</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
