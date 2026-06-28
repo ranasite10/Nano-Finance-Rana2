@@ -34,6 +34,7 @@ export default function DepositSection({ user, onBack, onDepositComplete, settin
   const [amount, setAmount] = useState<string>(() => String(chips[0] || 100));
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isBtnLoading, setIsBtnLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [successTxId, setSuccessTxId] = useState('');
   const [pin, setPin] = useState('');
@@ -128,22 +129,26 @@ export default function DepositSection({ user, onBack, onDepositComplete, settin
     e.preventDefault();
     const numAmount = Number(amount);
     if (!amount || numAmount <= 0) {
-      alert('অনুগ্রহ করে সঠিক পরিমাণ লিখুন।');
+       alert('অনুগ্রহ করে সঠিক পরিমাণ লিখুন।');
       return;
     }
 
     const minD = settings?.minDeposit ?? 500;
     const maxD = settings?.maxDeposit ?? 1000000;
     if (numAmount < minD) {
-      alert(`দুঃখিত, সর্বনিম্ন ডিপোজিট পরিমাণ ৳ ${minD.toLocaleString('bn-BD')} হতে হবে।`);
+       alert(`দুঃখিত, সর্বনিম্ন ডিপোজিট পরিমাণ ৳ ${minD.toLocaleString('bn-BD')} হতে হবে।`);
       return;
     }
     if (numAmount > maxD) {
-      alert(`দুঃখিত, সর্বোচ্চ ডিপোজিট পরিমাণ ৳ ${maxD.toLocaleString('bn-BD')} এর বেশি হতে পারবে না।`);
+       alert(`দুঃখিত, সর্বোচ্চ ডিপোজিট পরিমাণ ৳ ${maxD.toLocaleString('bn-BD')} এর বেশি হতে পারবে না।`);
       return;
     }
 
-    setIsProcessing(true);
+    setIsBtnLoading(true);
+    setTimeout(() => {
+      setIsBtnLoading(false);
+      setIsProcessing(true);
+    }, 1500);
   };
 
   const handleConfirmPinSubmit = (e: React.FormEvent) => {
@@ -323,10 +328,18 @@ export default function DepositSection({ user, onBack, onDepositComplete, settin
         {/* Action Submit Button */}
         <button
           onClick={handleDeposit}
+          disabled={isBtnLoading}
           id="btn-deposit-submit"
-          className="w-full bg-[#c5a059] hover:bg-[#dfc187] active:scale-[0.99] text-zinc-950 py-3.5 rounded-xl font-bold text-xs shadow-md transition-all font-sans text-center mt-auto cursor-pointer"
+          className="w-full bg-[#c5a059] hover:bg-[#dfc187] active:scale-[0.99] text-zinc-950 py-3.5 rounded-xl font-bold text-xs shadow-md transition-all font-sans text-center mt-auto cursor-pointer disabled:opacity-80 flex items-center justify-center gap-2"
         >
-          জমা নিশ্চিত করুন
+          {isBtnLoading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
+              <span>লোডিং হচ্ছে...</span>
+            </>
+          ) : (
+            'জমা নিশ্চিত করুন'
+          )}
         </button>
       </div>
 
