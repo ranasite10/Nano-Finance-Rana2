@@ -192,6 +192,40 @@ export default function App() {
     localStorage.setItem('jf_user', JSON.stringify(user));
   }, [user]);
 
+  // Intelligent prefetching during idle state or after splash renders to make other screens load instantly
+  useEffect(() => {
+    const prefetch = () => {
+      // Prefetch immediate/primary screens
+      import('./components/LoginScreen').catch(() => {});
+      import('./components/HomeSection').catch(() => {});
+      
+      // Prefetch secondary screens shortly after
+      setTimeout(() => {
+        import('./components/SavingsSection').catch(() => {});
+        import('./components/DepositSection').catch(() => {});
+        import('./components/WithdrawSection').catch(() => {});
+      }, 1000);
+
+      // Prefetch remaining screens when idle
+      setTimeout(() => {
+        import('./components/LoanSection').catch(() => {});
+        import('./components/PaymentSection').catch(() => {});
+        import('./components/TransactionSection').catch(() => {});
+        import('./components/NotificationSection').catch(() => {});
+        import('./components/ProfileSection').catch(() => {});
+      }, 2000);
+    };
+
+    if (typeof window !== 'undefined') {
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(prefetch);
+      } else {
+        const timer = setTimeout(prefetch, 1000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     localStorage.setItem('jf_screen', activeScreen);
     const cleanHash = window.location.hash.replace('#/', '');
