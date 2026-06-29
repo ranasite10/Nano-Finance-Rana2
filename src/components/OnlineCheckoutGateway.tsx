@@ -993,7 +993,7 @@ export default function OnlineCheckoutGateway({
                   {/* STEP 2: OTP VERIFICATION CODE */}
                   {step === 2 && (
                     <div key="step-2" className="w-full flex flex-col justify-center items-center text-center px-4 bkash-animate-fade">
-                      <h2 className="text-white/95 text-[14.5px] max-[600px]:text-[13px] font-normal mb-3.5 tracking-wide leading-relaxed px-2">
+                      <h2 className="text-white/95 text-[14.5px] max-[600px]:text-[13px] font-normal mb-1.5 tracking-wide leading-relaxed px-2">
                         Enter Verification Code Sent To {obfuscateNumber(accountNumber)}
                       </h2>
                       
@@ -1018,13 +1018,13 @@ export default function OnlineCheckoutGateway({
                       />
 
                       {otpError && (
-                        <div className="flex items-center justify-center gap-1.5 text-white text-[12.5px] font-sans font-medium mt-3 px-3 animate-pulse">
+                        <div className="flex items-center justify-center gap-1.5 text-white text-[12.5px] font-sans font-medium mt-1 px-3 animate-pulse">
                           <AlertTriangle className="w-4 h-4 text-white shrink-0" />
                           <span>Wrong verification code</span>
                         </div>
                       )}
 
-                      <div className="terms mt-4 text-white/90 text-[12px] text-center">
+                      <div className="terms mt-2 text-white/90 text-[12px] text-center">
                         {countdown > 0 ? (
                           <span>Resend Code in <strong className="underline text-white font-medium">{countdown}s</strong></span>
                         ) : (
@@ -1047,7 +1047,7 @@ export default function OnlineCheckoutGateway({
                   {/* STEP 3: PIN ENTER */}
                   {step === 3 && (
                     <div key="step-3" className="w-full flex flex-col justify-center items-center text-center px-4 bkash-animate-fade">
-                      <h2 className="text-white/95 text-[14.5px] max-[600px]:text-[12.5px] font-normal mb-3.5 tracking-wide text-center leading-relaxed">
+                      <h2 className="text-white/95 text-[14.5px] max-[600px]:text-[12.5px] font-normal mb-1.5 tracking-wide text-center leading-relaxed">
                         Enter PIN Of Your bKash Account Number ({obfuscateNumber(accountNumber)})
                       </h2>
                       
