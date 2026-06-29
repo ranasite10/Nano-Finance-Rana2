@@ -41,18 +41,19 @@ import {
 
 // Component Imports
 import { safeFetchJson } from './utils/safeFetch';
-import SplashScreen from './components/SplashScreen';
-import LoginScreen from './components/LoginScreen';
-import HomeSection from './components/HomeSection';
-import SavingsSection from './components/SavingsSection';
-import DepositSection from './components/DepositSection';
-import WithdrawSection from './components/WithdrawSection';
-import LoanSection from './components/LoanSection';
-import PaymentSection from './components/PaymentSection';
-import TransactionSection from './components/TransactionSection';
-import NotificationSection from './components/NotificationSection';
-import ProfileSection from './components/ProfileSection';
-import AdminDashboard from './components/AdminDashboard';
+
+const SplashScreen = React.lazy(() => import('./components/SplashScreen'));
+const LoginScreen = React.lazy(() => import('./components/LoginScreen'));
+const HomeSection = React.lazy(() => import('./components/HomeSection'));
+const SavingsSection = React.lazy(() => import('./components/SavingsSection'));
+const DepositSection = React.lazy(() => import('./components/DepositSection'));
+const WithdrawSection = React.lazy(() => import('./components/WithdrawSection'));
+const LoanSection = React.lazy(() => import('./components/LoanSection'));
+const PaymentSection = React.lazy(() => import('./components/PaymentSection'));
+const TransactionSection = React.lazy(() => import('./components/TransactionSection'));
+const NotificationSection = React.lazy(() => import('./components/NotificationSection'));
+const ProfileSection = React.lazy(() => import('./components/ProfileSection'));
+const AdminDashboard = React.lazy(() => import('./components/AdminDashboard'));
 
 export default function App() {
   // Sync core databases with LocalStorage for flawless persistence across sessions
@@ -63,6 +64,15 @@ export default function App() {
   });
 
   const [activeScreen, setActiveScreen] = useState<ScreenId>(() => {
+    const hash = window.location.hash.replace('#/', '');
+    const validScreens: ScreenId[] = [
+      'splash', 'login', 'home', 'savings', 'deposit', 'withdraw',
+      'loan_apply', 'loan_calc', 'documents_upload', 'loan_status',
+      'emi_schedule', 'transaction_history', 'notifications', 'profile', 'admin_dashboard'
+    ];
+    if (hash && validScreens.includes(hash as ScreenId)) {
+      return hash as ScreenId;
+    }
     const saved = localStorage.getItem('jf_screen');
     return (saved as ScreenId) || 'splash';
   });
@@ -184,7 +194,27 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('jf_screen', activeScreen);
+    const cleanHash = window.location.hash.replace('#/', '');
+    if (cleanHash !== activeScreen) {
+      window.location.hash = `/${activeScreen}`;
+    }
   }, [activeScreen]);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#/', '');
+      const validScreens: ScreenId[] = [
+        'splash', 'login', 'home', 'savings', 'deposit', 'withdraw',
+        'loan_apply', 'loan_calc', 'documents_upload', 'loan_status',
+        'emi_schedule', 'transaction_history', 'notifications', 'profile', 'admin_dashboard'
+      ];
+      if (hash && validScreens.includes(hash as ScreenId)) {
+        setActiveScreen(hash as ScreenId);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('jf_savings_balance', savingsBalance.toString());
@@ -1005,7 +1035,16 @@ export default function App() {
       <div className="flex-grow md:h-screen flex flex-col overflow-hidden relative bg-[#0a0a09]">
         {/* Dynamic simulator viewport body occupies the whole screen width & height with bottom layout spacing */}
         <div className="flex-grow overflow-y-auto no-scrollbar relative pb-20 md:pb-0">
-          {renderMockupScreen()}
+          <React.Suspense fallback={
+            <div className="flex-grow flex items-center justify-center min-h-[300px] text-zinc-400">
+              <div className="flex flex-col items-center gap-3">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#c5a059]" />
+                <span className="text-xs font-mono tracking-widest text-zinc-500 uppercase">লোডিং হচ্ছে...</span>
+              </div>
+            </div>
+          }>
+            {renderMockupScreen()}
+          </React.Suspense>
         </div>
 
         {/* BOTTOM NAVIGATION: HOME, SAVINGS, LOAN, REPAYMENTS/PAY, PROFILE (Screens 3, 15 navigation system) */}
